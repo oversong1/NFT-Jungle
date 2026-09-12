@@ -1,0 +1,13 @@
+cor de fundo das telas = #140D0A
+
+cor titulo = #F7F3EC
+cor texto corrido = #CFB28C
+
+cor botão = #D28A4C
+cor texto botão = #140D0A
+
+cor Texto em destaque "Menu, ,Filtro ,Cards" = #E89B55
+cor texto coleções  = #CFB28C
+
+
+docker eu tenho alguns projetos com React e typescript e docker que vou usar como base para criar tudo.
