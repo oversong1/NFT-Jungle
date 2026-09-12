@@ -48,7 +48,11 @@ export function CartaoNft({
           aria-pressed={favorito}
           onClick={aoAlternarFavorito}
         >
-          <Heart aria-hidden="true" className={favorito ? 'fill-destaque text-destaque' : ''} size={18} />
+          <Heart
+            aria-hidden="true"
+            className={favorito ? 'fill-destaque text-destaque' : ''}
+            size={18}
+          />
         </Botao>
       </div>
 

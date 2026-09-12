@@ -39,8 +39,8 @@
 html {
   background: var(--cor-fundo);
   color: var(--cor-texto);
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    monospace;
+  font-family:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   text-rendering: optimizeLegibility;
 }
 
