@@ -1,4 +1,4 @@
-import { Link, useParams, useSearch } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 
 type PropriedadesPaginaProvisoria = {
   titulo: string
@@ -49,39 +49,6 @@ export function PaginaConfirmacaoPedido() {
     <PaginaProvisoria
       titulo={`Pedido ${orderId}`}
       descricao="Rota privada. O recibo com snapshot de valores será implementado"
-    />
-  )
-}
-
-export function PaginaEntrar() {
-  const busca = useSearch({ from: '/entrar' })
-
-  return (
-    <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">Entrar</h1>
-      <p className="mt-4 text-texto">
-        O formulário real de login chega na Fase 6, com React Hook Form e Zod.
-      </p>
-      {busca.redirect ? (
-        <p className="mt-2 text-sm text-texto-suave">
-          Após entrar, você voltará para: <code>{busca.redirect}</code>
-        </p>
-      ) : null}
-      <p className="mt-6 text-sm text-texto">
-        Ainda não tem conta?{' '}
-        <Link to="/cadastro" className="font-bold text-destaque hover:text-titulo">
-          Criar cadastro
-        </Link>
-      </p>
-    </section>
-  )
-}
-
-export function PaginaCadastro() {
-  return (
-    <PaginaProvisoria
-      titulo="Criar conta"
-      descricao="O formulário real de cadastro com validação campo a campo."
     />
   )
 }

@@ -16,7 +16,6 @@ export type ErroApi = {
   campos?: Record<string, string>
 }
 
-
 import type {
   categoriasCatalogo,
   raridadesCatalogo,

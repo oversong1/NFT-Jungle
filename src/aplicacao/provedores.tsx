@@ -1,38 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { useEffect, type ReactNode } from 'react'
 
+import { clienteConsultas, limparCachePrivado } from '@/aplicacao/cliente-consultas'
 import { roteador } from '@/aplicacao/rotas'
-import { chaveEhPrivada, chaves } from '@/biblioteca/chaves-consulta'
-import type { ErroApi } from '@/tipos/api'
-
-export const clienteConsultas = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 30_000,
-      refetchOnWindowFocus: true,
-      retry: (tentativas, erro) => {
-        const erroApi = erro as ErroApi
-        // Erro 4xx é definitivo (credencial, validação, inexistente):
-        // repetir não muda o resultado.
-        if (erroApi.status >= 400 && erroApi.status < 500) return false
-        return tentativas < 2
-      },
-    },
-    mutations: {
-      // Mutations nunca repetem sozinhas; criação de pedido em especial.
-      retry: 0,
-    },
-  },
-})
-
-/** Remove do cache tudo que pertence a um usuário. */
-export function limparCachePrivado(cliente: QueryClient): void {
-  void cliente.cancelQueries()
-  cliente.removeQueries({
-    predicate: (consulta) => chaveEhPrivada(consulta.queryKey),
-  })
-  cliente.removeQueries({ queryKey: chaves.sessao })
-}
 
 export function Provedores({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -52,7 +22,5 @@ export function Provedores({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  return (
-    <QueryClientProvider client={clienteConsultas}>{children}</QueryClientProvider>
-  )
+  return <QueryClientProvider client={clienteConsultas}>{children}</QueryClientProvider>
 }

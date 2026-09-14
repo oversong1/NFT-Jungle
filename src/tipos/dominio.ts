@@ -121,3 +121,9 @@ export type Pedido = {
   criadoEm: string
   recibo: Recibo
 }
+
+export type Favorito = {
+  usuarioId: string
+  nftId: string
+  criadoEm: string
+}
