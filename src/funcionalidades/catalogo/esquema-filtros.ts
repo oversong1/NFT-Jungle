@@ -42,3 +42,5 @@ export const esquemaFiltrosCatalogo = z.object({
 })
 
 export type FiltrosCatalogo = z.infer<typeof esquemaFiltrosCatalogo>
+
+export const filtrosPadrao: FiltrosCatalogo = esquemaFiltrosCatalogo.parse({})

@@ -13,7 +13,6 @@ import {
   PaginaCarrinho,
   PaginaCarteiras,
   PaginaConfirmacaoPedido,
-  PaginaDetalheNft,
   PaginaNaoEncontrada,
   PaginaPagamento,
   PaginaPerfil,
@@ -23,6 +22,8 @@ import { estaAutenticado } from '@/funcionalidades/sessao/sessao-local'
 
 import { PaginaCadastro } from '@/aplicacao/paginas/pagina-cadastro'
 import { PaginaEntrar } from '@/aplicacao/paginas/pagina-entrar'
+import { PaginaDetalheNft } from '@/aplicacao/paginas/pagina-detalhe-nft'
+
 /**
  * Guarda de rota privada. Se não há sessão, redireciona para /entrar
  * preservando o endereço completo de destino em `redirect`.

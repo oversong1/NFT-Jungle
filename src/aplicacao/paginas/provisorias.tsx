@@ -16,17 +16,6 @@ function PaginaProvisoria({ titulo, descricao }: PropriedadesPaginaProvisoria) {
   )
 }
 
-export function PaginaDetalheNft() {
-  const { nftId } = useParams({ from: '/nfts/$nftId' })
-
-  return (
-    <PaginaProvisoria
-      titulo={`NFT ${nftId}`}
-      descricao="O detalhe completo será, consultando a API pelo id da URL."
-    />
-  )
-}
-
 export function PaginaCarrinho() {
   return (
     <PaginaProvisoria titulo="Carrinho" descricao="Itens, quantidades e cotação em ETH" />
