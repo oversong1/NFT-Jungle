@@ -46,8 +46,8 @@ const obrasCatalogo = [
   { nome: 'Emerald Ape #042', precoEth: '1.19', imagem: '/assets/nfts/emerald-ape.jpg' },
   { nome: 'Sage Nomad #009', precoEth: '1.69', imagem: '/assets/nfts/sage-nomad.jpg' },
   { nome: 'Neon Vessel #552', precoEth: '1.99', imagem: '/assets/nfts/neon-vessel.jpg' },
-  { nome: 'Cosmic Bloom #118', precoEth: '1.29', imagem: '/assets/nfts/primate-04.jpg' },
-  { nome: 'Violet Nomad #314', precoEth: '1.39', imagem: '/assets/nfts/primate-01.jpg' },
+  { nome: 'Cosmic Bloom #118', precoEth: '1.29', imagem: '/assets/nfts/sage-nomad.jpg' },
+  { nome: 'Violet Nomad #314', precoEth: '1.39', imagem: '/assets/nfts/sage-nomad.jpg' },
   { nome: 'Ivory Baron #088', precoEth: '1.79', imagem: '/assets/nfts/neon-vessel.jpg' },
 ] as const
 
