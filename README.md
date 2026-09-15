@@ -142,24 +142,29 @@ a baseline só para o teste passar.
 
 ## Auditoria Lighthouse
 
-Não medida nesta entrega — precisa de um navegador real contra o build de
-produção local, o que este ambiente de desenvolvimento assistido não tinha
-como fazer. Antes da entrega final, rode localmente e preencha a tabela:
+Medida em produção local (`npm run build` + `npm run preview`), 3 execuções por
+combinação página/perfil via `scripts/lighthouse.ps1` (automatiza build, preview,
+as 12 medições e o encerramento do servidor). Relatórios completos (HTML, com o
+JSON bruto embutido) em [`relatorios/`](relatorios/) — 12 arquivos,
+`<página>-<perfil>-<execução>.html`. Valores abaixo são a mediana das 3 execuções
+de cada combinação. A extração dos números a partir do JSON embutido nos
+relatórios foi feita com `python3 scripts/extrair-lighthouse.py`.
 
-```bash
-npm run build
-npm run preview
-npx lighthouse http://localhost:4173/ --output html --output-path relatorios/inicio-mobile.html
-```
-
-| Página  | Modo    | Performance | Acessibilidade | Boas práticas | SEO | LCP | CLS | TBT |
-| ------- | ------- | ----------- | -------------- | ------------- | --- | --- | --- | --- |
-| Início  | mobile  | —           | —              | —             | —   | —   | —   | —   |
-| Início  | desktop | —           | —              | —             | —   | —   | —   | —   |
-| Detalhe | mobile  | —           | —              | —             | —   | —   | —   | —   |
-| Detalhe | desktop | —           | —              | —             | —   | —   | —   | —   |
+| Página  | Modo    | Performance | Acessibilidade | Boas práticas | SEO | LCP     | CLS   | TBT    |
+| ------- | ------- | ----------- | --------------- | -------------- | --- | ------- | ----- | ------ |
+| Início  | mobile  | 74          | 100             | 96             | 92  | 3654 ms | 0.210 | 32 ms  |
+| Início  | desktop | 98          | 97              | 96             | 92  | 969 ms  | 0.002 | 0 ms   |
+| Detalhe | mobile  | 84          | 100             | 96             | 92  | 3770 ms | 0.000 | 14 ms  |
+| Detalhe | desktop | 99          | 100             | 96             | 92  | 813 ms  | 0.056 | 0 ms   |
 
 Metas do desafio: performance ≥ 90, acessibilidade ≥ 95, boas práticas ≥ 95, SEO ≥ 90.
+
+Todas as combinações **desktop** batem as quatro metas. Em **mobile**, acessibilidade
+(100), boas práticas (96) e SEO (92) também batem — a métrica que fica abaixo da meta
+é performance (74 em Início, 84 em Detalhe), puxada pelo LCP em torno de 3.6–3.8 s no
+perfil mobile do Lighthouse (throttling de CPU/rede 4x mais agressivo que o desktop).
+Não foi feita otimização adicional de performance mobile nesta entrega além do que já
+existia (paginação, `React.lazy` nas rotas, imagens com `loading="lazy"`).
 
 ## Contas de demonstração
 
