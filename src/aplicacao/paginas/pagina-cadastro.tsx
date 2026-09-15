@@ -3,6 +3,7 @@ import { Link, useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 
 import { CampoTexto } from '@/componentes/compostos/campo-texto'
+import { MolduraSessao, ProvedoresSociais } from '@/componentes/compostos/moldura-sessao'
 import { Botao } from '@/componentes/ui/botao'
 import { esquemaCadastro, type DadosCadastro } from '@/funcionalidades/sessao/esquemas'
 import { useCadastrar } from '@/funcionalidades/sessao/usar-sessao'
@@ -39,16 +40,20 @@ export function PaginaCadastro() {
   }
 
   return (
-    <main id="conteudo" tabIndex={-1} className="mx-auto max-w-md px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
-        Criar conta
-      </h1>
+    <MolduraSessao ativa="cadastro" rotuloTitulo="titulo-cadastro">
+      <div>
+        <h1
+          id="titulo-cadastro"
+          className="text-2xl font-black uppercase tracking-tight text-titulo"
+        >
+          Criar conta
+        </h1>
+        <p className="mt-2 text-sm text-texto">
+          Leva menos de um minuto para começar a colecionar.
+        </p>
+      </div>
 
-      <form
-        onSubmit={handleSubmit(aoEnviar)}
-        noValidate
-        className="mt-8 flex flex-col gap-5"
-      >
+      <form onSubmit={handleSubmit(aoEnviar)} noValidate className="flex flex-col gap-5">
         <CampoTexto
           id="cadastro-nome"
           rotulo="Nome"
@@ -91,17 +96,19 @@ export function PaginaCadastro() {
           </p>
         ) : null}
 
-        <Botao type="submit" disabled={isSubmitting}>
+        <Botao type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting ? 'Criando conta…' : 'Criar conta'}
         </Botao>
       </form>
 
-      <p className="mt-6 text-sm text-texto">
+      <ProvedoresSociais />
+
+      <p className="text-center text-sm text-texto">
         Já tem conta?{' '}
         <Link to="/entrar" className="font-bold text-destaque hover:text-titulo">
           Entrar
         </Link>
       </p>
-    </main>
+    </MolduraSessao>
   )
 }

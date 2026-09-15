@@ -8,6 +8,7 @@ import {
 } from 'react-hook-form'
 
 import { CampoTexto } from '@/componentes/compostos/campo-texto'
+import { PainelConta } from '@/componentes/compostos/painel-conta'
 import { Botao } from '@/componentes/ui/botao'
 import {
   arquivoParaDataUrl,
@@ -68,7 +69,7 @@ function SecaoAvatar({ perfil }: { perfil: Usuario }) {
   return (
     <section
       aria-labelledby="titulo-avatar"
-      className="flex flex-wrap items-center gap-5"
+      className="flex flex-col items-center gap-4 border-b border-[var(--cor-borda)] pb-6 text-center"
     >
       <h2 id="titulo-avatar" className="sr-only">
         Foto de perfil
@@ -91,6 +92,11 @@ function SecaoAvatar({ perfil }: { perfil: Usuario }) {
         )}
       </div>
 
+      <div>
+        <p className="font-bold text-titulo">{perfil.nome}</p>
+        <p className="break-all text-xs text-texto-suave">{perfil.email}</p>
+      </div>
+
       <div className="space-y-2">
         <input
           ref={referenciaEntrada}
@@ -103,6 +109,7 @@ function SecaoAvatar({ perfil }: { perfil: Usuario }) {
         <Botao
           type="button"
           variante="secundaria"
+          tamanho="pequeno"
           disabled={atualizarPerfil.isPending}
           onClick={() => referenciaEntrada.current?.click()}
         >
@@ -136,7 +143,10 @@ function FormularioDados({ perfil }: { perfil: Usuario }) {
   }
 
   return (
-    <section aria-labelledby="titulo-dados">
+    <section
+      aria-labelledby="titulo-dados"
+      className="rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-5 sm:p-6"
+    >
       <h2 id="titulo-dados" className="mb-4 text-xl font-bold text-titulo">
         Dados pessoais
       </h2>
@@ -200,7 +210,10 @@ function FormularioSenha() {
   }
 
   return (
-    <section aria-labelledby="titulo-senha">
+    <section
+      aria-labelledby="titulo-senha"
+      className="rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-5 sm:p-6"
+    >
       <h2 id="titulo-senha" className="mb-4 text-xl font-bold text-titulo">
         Alterar senha
       </h2>
@@ -258,7 +271,7 @@ export function PaginaPerfil() {
       <main
         id="conteudo"
         tabIndex={-1}
-        className="mx-auto max-w-3xl px-4 py-10 sm:px-6"
+        className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8"
         aria-busy="true"
       >
         <div className="h-72 animate-pulse rounded-[var(--raio-cartao)] bg-superficie motion-reduce:animate-none" />
@@ -272,7 +285,7 @@ export function PaginaPerfil() {
       <main
         id="conteudo"
         tabIndex={-1}
-        className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6"
+        className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6 lg:px-8"
         role="alert"
       >
         <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
@@ -289,14 +302,24 @@ export function PaginaPerfil() {
     <main
       id="conteudo"
       tabIndex={-1}
-      className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6"
+      className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8"
     >
-      <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
-        Meu perfil
-      </h1>
-      <SecaoAvatar perfil={consulta.data} />
-      <FormularioDados perfil={consulta.data} />
-      <FormularioSenha />
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+        <PainelConta>
+          <SecaoAvatar perfil={consulta.data} />
+        </PainelConta>
+
+        <div className="space-y-8">
+          <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
+            Meu perfil
+          </h1>
+
+          <div className="grid items-start gap-6 xl:grid-cols-2">
+            <FormularioDados perfil={consulta.data} />
+            <FormularioSenha />
+          </div>
+        </div>
+      </div>
     </main>
   )
 }

@@ -20,7 +20,7 @@ export type BancoMock = {
   idempotencia: Record<string, { pedidoId: string; hash: string }>
 }
 
-const CHAVE_BANCO = 'kurio.mock.bd.v2'
+const CHAVE_BANCO = 'kurio.mock.bd.v3'
 
 function criarBancoInicial(): BancoMock {
   return {

@@ -36,7 +36,7 @@ function LinhaDoCarrinho({ item, aoFalhar }: PropriedadesLinha) {
     return (
       <div
         role="status"
-        className="h-28 animate-pulse rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie motion-reduce:animate-none"
+        className="h-28 animate-pulse bg-[#271712] motion-reduce:animate-none"
       >
         <span className="sr-only">Carregando item do carrinho</span>
       </div>
@@ -47,7 +47,7 @@ function LinhaDoCarrinho({ item, aoFalhar }: PropriedadesLinha) {
     return (
       <div
         role="alert"
-        className="flex items-center justify-between gap-3 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-4"
+        className="flex items-center justify-between gap-3 border border-[#54321e] bg-[#271712] p-4"
       >
         <p className="text-sm text-texto">
           Não foi possível carregar o item {item.nftId}.
@@ -79,82 +79,102 @@ function LinhaDoCarrinho({ item, aoFalhar }: PropriedadesLinha) {
   }
 
   return (
-    <div className="flex gap-4 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-4">
-      <Link
-        to="/nfts/$nftId"
-        params={{ nftId: nft.id }}
-        className="shrink-0 overflow-hidden rounded-lg"
-      >
-        <img
-          src={nft.imagem}
-          alt={`Arte do NFT ${nft.nome}`}
-          className="h-24 w-24 object-cover"
-        />
-      </Link>
-
-      <div className="flex flex-1 flex-wrap items-start justify-between gap-3">
+    <div className="grid grid-cols-1 gap-4 border-b border-[#54321e] bg-[#271712] p-4 lg:grid-cols-[minmax(0,1fr)_7rem_10rem_7rem_3rem] lg:items-center lg:bg-transparent lg:px-2 lg:py-4">
+      <div className="flex items-center gap-4">
+        <Link
+          to="/nfts/$nftId"
+          params={{ nftId: nft.id }}
+          className="shrink-0 overflow-hidden bg-[#332018]"
+        >
+          <img
+            src={nft.imagem}
+            alt={`Arte do NFT ${nft.nome}`}
+            className="h-16 w-16 object-cover sm:h-20 sm:w-20"
+          />
+        </Link>
         <div>
-          <h2 className="font-bold text-titulo">
+          <h2 className="text-sm font-bold text-titulo">
             <Link to="/nfts/$nftId" params={{ nftId: nft.id }}>
               {nft.nome}
             </Link>
           </h2>
-          <p className="mt-1 text-sm text-texto">{formatarEth(nft.precoEth)} cada</p>
-          <p className="mt-1 text-sm font-bold text-titulo">
-            {formatarEth(multiplicarEth(nft.precoEth, item.quantidade))} no total
+          <p className="mt-0.5 text-[10px] uppercase tracking-wide text-[#c7a77f]">
+            {nft.colecaoNome}
           </p>
           {precoMudou ? (
             <p role="status" className="mt-1 text-xs font-bold text-destaque">
-              O preço deste NFT mudou. A cotação abaixo já usa o preço atual.
+              O preço deste NFT mudou. A cotação ao lado já usa o preço atual.
             </p>
           ) : null}
         </div>
+      </div>
 
-        <div className="flex items-center gap-3">
-          <div
-            role="group"
-            aria-label={`Quantidade de ${nft.nome}`}
-            className="flex items-center rounded-full border border-[var(--cor-borda)]"
-          >
-            <Botao
-              type="button"
-              variante="texto"
-              tamanho="icone"
-              aria-label={`Diminuir quantidade de ${nft.nome}`}
-              disabled={item.quantidade <= 1 || mutacaoPendente}
-              onClick={() => mudarQuantidade(item.quantidade - 1)}
-            >
-              <Minus aria-hidden="true" size={16} />
-            </Botao>
-            <output
-              aria-live="polite"
-              className="min-w-8 text-center font-bold text-titulo"
-            >
-              {item.quantidade}
-            </output>
-            <Botao
-              type="button"
-              variante="texto"
-              tamanho="icone"
-              aria-label={`Aumentar quantidade de ${nft.nome}`}
-              disabled={item.quantidade >= limite || mutacaoPendente}
-              onClick={() => mudarQuantidade(item.quantidade + 1)}
-            >
-              <Plus aria-hidden="true" size={16} />
-            </Botao>
-          </div>
+      <p className="text-sm text-texto">
+        <span className="text-[10px] font-bold uppercase tracking-wide text-[#c7a77f] lg:hidden">
+          Preço:{' '}
+        </span>
+        {formatarEth(nft.precoEth)}
+      </p>
 
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] font-bold uppercase tracking-wide text-[#c7a77f] lg:sr-only">
+          Edições
+        </span>
+        <div
+          role="group"
+          aria-label={`Quantidade de ${nft.nome}`}
+          className="flex items-center border border-[#54321e] bg-[#271712]"
+        >
           <Botao
             type="button"
-            variante="secundaria"
+            variante="texto"
             tamanho="icone"
-            aria-label={`Remover ${nft.nome} do carrinho`}
-            disabled={mutacaoPendente}
-            onClick={() => removerItem.mutate(nft.id)}
+            className="min-h-9 min-w-9"
+            aria-label={`Diminuir quantidade de ${nft.nome}`}
+            disabled={item.quantidade <= 1 || mutacaoPendente}
+            onClick={() => mudarQuantidade(item.quantidade - 1)}
           >
-            <Trash2 aria-hidden="true" size={16} />
+            <Minus aria-hidden="true" size={16} />
+          </Botao>
+          <output
+            aria-live="polite"
+            className="min-w-8 text-center text-sm font-bold text-titulo"
+          >
+            {item.quantidade}
+          </output>
+          <Botao
+            type="button"
+            variante="texto"
+            tamanho="icone"
+            className="min-h-9 min-w-9"
+            aria-label={`Aumentar quantidade de ${nft.nome}`}
+            disabled={item.quantidade >= limite || mutacaoPendente}
+            onClick={() => mudarQuantidade(item.quantidade + 1)}
+          >
+            <Plus aria-hidden="true" size={16} />
           </Botao>
         </div>
+      </div>
+
+      <p className="text-sm font-bold text-titulo">
+        <span className="text-[10px] font-bold uppercase tracking-wide text-[#c7a77f] lg:hidden">
+          Total:{' '}
+        </span>
+        {formatarEth(multiplicarEth(nft.precoEth, item.quantidade))}
+      </p>
+
+      <div className="lg:justify-self-end">
+        <Botao
+          type="button"
+          variante="secundaria"
+          tamanho="icone"
+          className="min-h-9 min-w-9 rounded-none border-[#54321e]"
+          aria-label={`Remover ${nft.nome} do carrinho`}
+          disabled={mutacaoPendente}
+          onClick={() => removerItem.mutate(nft.id)}
+        >
+          <Trash2 aria-hidden="true" size={16} />
+        </Botao>
       </div>
     </div>
   )
@@ -193,10 +213,10 @@ export function PaginaCarrinho() {
       <main
         id="conteudo"
         tabIndex={-1}
-        className="mx-auto max-w-6xl px-4 py-10 sm:px-6"
+        className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"
         aria-busy="true"
       >
-        <div className="h-64 animate-pulse rounded-[var(--raio-cartao)] bg-superficie motion-reduce:animate-none" />
+        <div className="h-64 animate-pulse bg-[#271712] motion-reduce:animate-none" />
         <span className="sr-only">Carregando carrinho</span>
       </main>
     )
@@ -207,7 +227,7 @@ export function PaginaCarrinho() {
       <main
         id="conteudo"
         tabIndex={-1}
-        className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6"
+        className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8"
         role="alert"
       >
         <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
@@ -243,14 +263,39 @@ export function PaginaCarrinho() {
   const erroCotacao = cotacao.isError ? (cotacao.error as unknown as ErroApi) : null
 
   return (
-    <main id="conteudo" tabIndex={-1} className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <h1 className="mb-8 text-3xl font-black uppercase tracking-tight text-titulo">
+    <main
+      id="conteudo"
+      tabIndex={-1}
+      className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
+    >
+      <nav
+        aria-label="Trilha de navegação"
+        className="mb-4 text-[11px] font-bold text-[#c7a77f]"
+      >
+        <Link to="/" search={filtrosPadrao} className="hover:text-titulo">
+          Início
+        </Link>
+        <span aria-hidden="true"> / </span>
+        <span className="text-acao">Carrinho</span>
+      </nav>
+
+      <h1 className="mb-8 text-2xl font-black uppercase tracking-wide text-titulo sm:text-3xl">
         Carrinho
       </h1>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_22rem]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <section aria-label="Itens do carrinho">
-          <ul className="space-y-4">
+          <div
+            aria-hidden="true"
+            className="hidden grid-cols-[minmax(0,1fr)_7rem_10rem_7rem_3rem] border-b border-[#54321e] px-2 pb-3 text-[10px] font-black uppercase tracking-[0.16em] text-[#c7a77f] lg:grid"
+          >
+            <span>NFTs</span>
+            <span>Preço</span>
+            <span>Edições</span>
+            <span>Total</span>
+            <span className="sr-only">Ações</span>
+          </div>
+          <ul className="space-y-4 lg:space-y-0">
             {carrinho.data.itens.map((item) => (
               <li key={item.nftId}>
                 <LinhaDoCarrinho item={item} aoFalhar={definirMensagem} />
@@ -263,11 +308,13 @@ export function PaginaCarrinho() {
         </section>
 
         <aside aria-label="Resumo da compra" className="lg:sticky lg:top-6 lg:self-start">
-          <div className="space-y-5 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-5">
-            <h2 className="text-lg font-bold text-titulo">Resumo</h2>
+          <div className="space-y-5 border border-[#54321e] bg-[#271712] p-5">
+            <h2 className="text-sm font-black uppercase tracking-wide text-titulo">
+              Resumo do pedido
+            </h2>
 
             {cupom ? (
-              <div className="flex items-center justify-between rounded-lg bg-superficie-elevada px-3 py-2 text-sm">
+              <div className="flex items-center justify-between bg-[#332018] px-3 py-2 text-sm">
                 <span className="font-bold text-titulo">Cupom {cupom}</span>
                 <Botao
                   type="button"
@@ -284,7 +331,7 @@ export function PaginaCarrinho() {
               <form onSubmit={aoEnviarCupom} className="space-y-2">
                 <label
                   htmlFor="campo-cupom"
-                  className="block text-sm font-bold text-titulo"
+                  className="block text-xs font-bold uppercase tracking-wide text-titulo"
                 >
                   Cupom de desconto
                 </label>
@@ -294,9 +341,13 @@ export function PaginaCarrinho() {
                     value={cupomDigitado}
                     onChange={(evento) => definirCupomDigitado(evento.target.value)}
                     placeholder="Ex.: KURIO10"
-                    className="w-full rounded-lg border border-[var(--cor-borda)] bg-superficie-elevada px-3 py-2.5 text-sm uppercase text-titulo placeholder:text-texto-suave"
+                    className="w-full border border-[#54321e] bg-[#332018] px-3 py-2.5 text-sm uppercase text-titulo placeholder:text-[#a98057]"
                   />
-                  <Botao type="submit" variante="secundaria">
+                  <Botao
+                    type="submit"
+                    variante="secundaria"
+                    className="rounded-none border-[#54321e]"
+                  >
                     Aplicar
                   </Botao>
                 </div>
@@ -353,16 +404,16 @@ export function PaginaCarrinho() {
                     {formatarEth(cotacao.data.taxaRedeEth)}
                   </dd>
                 </div>
-                <div className="flex justify-between border-t border-[var(--cor-borda)] pt-2 text-base">
+                <div className="flex justify-between border-t border-[#54321e] pt-2 text-base">
                   <dt className="font-bold text-titulo">Total</dt>
-                  <dd className="font-black text-destaque">
+                  <dd className="font-black text-acao">
                     {formatarEth(cotacao.data.totalEth)}
                   </dd>
                 </div>
               </dl>
             ) : null}
 
-            <Botao comoFilho className="w-full">
+            <Botao comoFilho className="w-full rounded-none">
               <Link
                 to="/pagamento"
                 search={{ cupom: cotacao.data?.cupomAplicado ?? undefined }}
@@ -371,6 +422,14 @@ export function PaginaCarrinho() {
                 Continuar para pagamento
               </Link>
             </Botao>
+
+            <Link
+              to="/"
+              search={filtrosPadrao}
+              className="block text-center text-[10px] font-bold uppercase tracking-wide text-acao hover:text-titulo"
+            >
+              Continuar explorando
+            </Link>
           </div>
         </aside>
       </div>

@@ -8,7 +8,7 @@ import { iniciarRequisicao } from '@/mocks/cenarios'
 import type { Paginacao } from '@/tipos/api'
 import type { Nft } from '@/tipos/dominio'
 
-const POR_PAGINA = 8
+const POR_PAGINA = 6
 
 export const handlersCatalogo = [
   http.get('/api/nfts', async ({ request }) => {

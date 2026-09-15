@@ -44,8 +44,13 @@ function LinhaDaRevisao({ item }: { item: ItemCarrinho }) {
   if (!consulta.data) return null
 
   return (
-    <li className="flex justify-between gap-2">
-      <span className="text-texto">
+    <li className="flex items-center gap-3">
+      <img
+        src={consulta.data.imagem}
+        alt=""
+        className="h-10 w-10 shrink-0 object-cover"
+      />
+      <span className="flex-1 text-texto">
         {item.quantidade}× {consulta.data.nome}
       </span>
       <span className="font-bold text-titulo">{formatarEth(consulta.data.precoEth)}</span>
@@ -215,10 +220,10 @@ export function PaginaPagamento() {
       <main
         id="conteudo"
         tabIndex={-1}
-        className="mx-auto max-w-4xl px-4 py-10 sm:px-6"
+        className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"
         aria-busy="true"
       >
-        <div className="h-72 animate-pulse rounded-[var(--raio-cartao)] bg-superficie motion-reduce:animate-none" />
+        <div className="h-72 animate-pulse bg-[#271712] motion-reduce:animate-none" />
         <span className="sr-only">Carregando pagamento</span>
       </main>
     )
@@ -249,32 +254,62 @@ export function PaginaPagamento() {
   const erros = formulario.formState.errors
 
   return (
-    <main id="conteudo" tabIndex={-1} className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <h1 className="mb-8 text-3xl font-black uppercase tracking-tight text-titulo">
+    <main
+      id="conteudo"
+      tabIndex={-1}
+      className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
+    >
+      <nav
+        aria-label="Trilha de navegação"
+        className="mb-4 text-[11px] font-bold text-[#c7a77f]"
+      >
+        <Link to="/" search={filtrosPadrao} className="hover:text-titulo">
+          Início
+        </Link>
+        <span aria-hidden="true"> / </span>
+        <Link to="/carrinho" search={{ cupom }} className="hover:text-titulo">
+          Carrinho
+        </Link>
+        <span aria-hidden="true"> / </span>
+        <span className="text-acao">Pagamento</span>
+      </nav>
+
+      <h1 className="mb-8 text-2xl font-black uppercase tracking-wide text-titulo sm:text-3xl">
         Pagamento
       </h1>
 
       <form
         noValidate
         onSubmit={formulario.handleSubmit((dados) => enviarPedido.mutate(dados))}
-        className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_20rem]"
+        className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]"
       >
-        <section aria-label="Dados do colecionador e carteira" className="space-y-5">
-          <CampoTexto
-            id="campo-nome"
-            rotulo="Nome completo"
-            autoComplete="name"
-            erro={erros.nome?.message}
-            {...formulario.register('nome')}
-          />
-          <CampoTexto
-            id="campo-email"
-            rotulo="E-mail"
-            type="email"
-            autoComplete="email"
-            erro={erros.email?.message}
-            {...formulario.register('email')}
-          />
+        <section
+          aria-label="Dados do colecionador e carteira"
+          className="space-y-5 border border-[#54321e] bg-[#271712] p-5 sm:p-6"
+        >
+          <h2 className="text-sm font-black uppercase tracking-wide text-titulo">
+            Dados do colecionador
+          </h2>
+
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <CampoTexto
+              id="campo-nome"
+              rotulo="Nome completo"
+              autoComplete="name"
+              className="rounded-none border-[#54321e] bg-[#332018]"
+              erro={erros.nome?.message}
+              {...formulario.register('nome')}
+            />
+            <CampoTexto
+              id="campo-email"
+              rotulo="E-mail"
+              type="email"
+              autoComplete="email"
+              className="rounded-none border-[#54321e] bg-[#332018]"
+              erro={erros.email?.message}
+              {...formulario.register('email')}
+            />
+          </div>
 
           <fieldset>
             <legend className="mb-2 text-sm font-bold text-titulo">
@@ -283,16 +318,16 @@ export function PaginaPagamento() {
             {listaCarteiras.length === 0 ? (
               <p className="text-sm text-texto">
                 Você ainda não tem carteira cadastrada. Cadastre uma em{' '}
-                <Link to="/carteiras" className="font-bold text-destaque underline">
+                <Link to="/carteiras" className="font-bold text-acao underline">
                   Carteiras
                 </Link>{' '}
                 e volte para concluir.
               </p>
             ) : (
-              <ul className="space-y-2">
+              <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                 {listaCarteiras.map((carteira) => (
                   <li key={carteira.id}>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[var(--cor-borda)] bg-superficie p-3">
+                    <label className="flex h-full cursor-pointer items-center gap-3 border border-[#54321e] bg-[#332018] p-3">
                       <input
                         type="radio"
                         value={carteira.id}
@@ -320,18 +355,20 @@ export function PaginaPagamento() {
 
         <aside
           aria-label="Revisão do pedido"
-          className="space-y-4 self-start rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-5"
+          className="space-y-4 self-start border border-[#54321e] bg-[#271712] p-5 lg:sticky lg:top-6"
         >
-          <h2 className="text-lg font-bold text-titulo">Revisão</h2>
+          <h2 className="text-sm font-black uppercase tracking-wide text-titulo">
+            Revisão
+          </h2>
 
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-3 text-sm">
             {(carrinho.data?.itens ?? []).map((item) => (
               <LinhaDaRevisao key={item.nftId} item={item} />
             ))}
           </ul>
 
           {cotacaoParaExibir ? (
-            <dl className="space-y-1.5 border-t border-[var(--cor-borda)] pt-3 text-sm">
+            <dl className="space-y-1.5 border-t border-[#54321e] pt-3 text-sm">
               <div className="flex justify-between">
                 <dt className="text-texto">Subtotal</dt>
                 <dd className="text-titulo">
@@ -357,7 +394,7 @@ export function PaginaPagamento() {
               </div>
               <div className="flex justify-between text-base">
                 <dt className="font-bold text-titulo">Total</dt>
-                <dd className="font-black text-destaque">
+                <dd className="font-black text-acao">
                   {formatarEth(cotacaoParaExibir.totalEth)}
                 </dd>
               </div>
@@ -367,7 +404,7 @@ export function PaginaPagamento() {
           {cotacaoDivergente ? (
             <div
               role="alert"
-              className="rounded-lg border border-destaque/60 bg-superficie-elevada p-3 text-sm"
+              className="border border-destaque/60 bg-[#332018] p-3 text-sm"
             >
               <p className="font-bold text-destaque">
                 A cotação mudou desde a sua revisão.
@@ -380,7 +417,7 @@ export function PaginaPagamento() {
 
           <Botao
             type="submit"
-            className="w-full"
+            className="w-full rounded-none"
             disabled={enviarPedido.isPending || listaCarteiras.length === 0}
           >
             {enviarPedido.isPending ? 'Confirmando…' : 'Confirmar pedido'}

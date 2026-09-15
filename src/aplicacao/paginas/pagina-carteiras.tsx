@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { CampoTexto } from '@/componentes/compostos/campo-texto'
+import { PainelConta } from '@/componentes/compostos/painel-conta'
 import { Botao } from '@/componentes/ui/botao'
 import { redesCatalogo } from '@/funcionalidades/catalogo/esquema-filtros'
 import { rotulosRede } from '@/funcionalidades/catalogo/rotulos'
@@ -100,60 +101,64 @@ function FormularioCarteira({
       noValidate
       onSubmit={formulario.handleSubmit(aoEnviar)}
       aria-label={editando ? `Editar carteira ${carteira!.apelido}` : 'Nova carteira'}
-      className="space-y-5 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie-elevada p-5"
+      className="space-y-5 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie-elevada p-5 sm:p-6"
     >
       <h2 className="text-lg font-bold text-titulo">
         {editando ? 'Editar carteira' : 'Nova carteira'}
       </h2>
 
-      <CampoTexto
-        id="campo-apelido"
-        rotulo="Apelido"
-        erro={erros.apelido?.message}
-        {...formulario.register('apelido')}
-      />
-
-      {editando ? (
+      <div className="grid gap-5 sm:grid-cols-2">
         <CampoTexto
-          id="campo-endereco"
-          rotulo="Endereço"
-          value={carteira!.endereco}
-          disabled
-          readOnly
-          className="font-mono"
+          id="campo-apelido"
+          rotulo="Apelido"
+          erro={erros.apelido?.message}
+          {...formulario.register('apelido')}
         />
-      ) : (
-        <CampoTexto
-          id="campo-endereco"
-          rotulo="Endereço"
-          placeholder="0x…"
-          spellCheck={false}
-          className="font-mono"
-          erro={erros.endereco?.message}
-          {...formulario.register('endereco')}
-        />
-      )}
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="campo-rede" className="text-sm font-bold text-titulo">
-          Rede
-        </label>
-        <select
-          id="campo-rede"
-          className="min-h-11 rounded-full border border-[var(--cor-borda)] bg-superficie px-4 text-titulo"
-          {...formulario.register('rede')}
-        >
-          {redes.map((rede) => (
-            <option key={rede} value={rede}>
-              {rotulosRede[rede]}
-            </option>
-          ))}
-        </select>
-        {erros.rede ? (
-          <p role="alert" className="text-sm text-erro">
-            {erros.rede.message}
-          </p>
-        ) : null}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="campo-rede" className="text-sm font-bold text-titulo">
+            Rede
+          </label>
+          <select
+            id="campo-rede"
+            className="min-h-11 rounded-full border border-[var(--cor-borda)] bg-superficie px-4 text-titulo"
+            {...formulario.register('rede')}
+          >
+            {redes.map((rede) => (
+              <option key={rede} value={rede}>
+                {rotulosRede[rede]}
+              </option>
+            ))}
+          </select>
+          {erros.rede ? (
+            <p role="alert" className="text-sm text-erro">
+              {erros.rede.message}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="sm:col-span-2">
+          {editando ? (
+            <CampoTexto
+              id="campo-endereco"
+              rotulo="Endereço"
+              value={carteira!.endereco}
+              disabled
+              readOnly
+              className="font-mono"
+            />
+          ) : (
+            <CampoTexto
+              id="campo-endereco"
+              rotulo="Endereço"
+              placeholder="0x…"
+              spellCheck={false}
+              className="font-mono"
+              erro={erros.endereco?.message}
+              {...formulario.register('endereco')}
+            />
+          )}
+        </div>
       </div>
 
       <div className="flex items-start gap-3">
@@ -216,22 +221,21 @@ function CartaoCarteira({
   }
 
   return (
-    <article className="space-y-3 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-titulo">{carteira.apelido}</h2>
-          <p className="break-all font-mono text-sm text-texto">{carteira.endereco}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="rounded-full border border-[var(--cor-borda)] px-3 py-1 text-xs font-bold text-texto">
-            {rotulosRede[carteira.rede]}
+    <article className="flex h-full flex-col gap-3 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-5">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-[var(--cor-borda)] px-3 py-1 text-xs font-bold text-texto">
+          {rotulosRede[carteira.rede]}
+        </span>
+        {carteira.principal ? (
+          <span className="rounded-full bg-acao px-3 py-1 text-xs font-bold text-fundo">
+            Principal
           </span>
-          {carteira.principal ? (
-            <span className="rounded-full bg-acao px-3 py-1 text-xs font-bold text-fundo">
-              Principal
-            </span>
-          ) : null}
-        </div>
+        ) : null}
+      </div>
+
+      <div className="flex-1">
+        <h2 className="text-lg font-bold text-titulo">{carteira.apelido}</h2>
+        <p className="break-all font-mono text-sm text-texto">{carteira.endereco}</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -266,7 +270,7 @@ export function PaginaCarteiras() {
       <main
         id="conteudo"
         tabIndex={-1}
-        className="mx-auto max-w-3xl px-4 py-10 sm:px-6"
+        className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8"
         aria-busy="true"
       >
         <div className="h-72 animate-pulse rounded-[var(--raio-cartao)] bg-superficie motion-reduce:animate-none" />
@@ -280,7 +284,7 @@ export function PaginaCarteiras() {
       <main
         id="conteudo"
         tabIndex={-1}
-        className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6"
+        className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6 lg:px-8"
         role="alert"
       >
         <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
@@ -299,51 +303,60 @@ export function PaginaCarteiras() {
     <main
       id="conteudo"
       tabIndex={-1}
-      className="mx-auto max-w-3xl space-y-8 px-4 py-10 sm:px-6"
+      className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8"
     >
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
-          Minhas carteiras
-        </h1>
-        <Botao type="button" onClick={() => definirCriando(true)} disabled={criando}>
-          Adicionar carteira
-        </Botao>
-      </header>
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+        <PainelConta />
 
-      <p className="text-sm text-texto-suave">
-        A carteira principal é usada como padrão no pagamento. Toda conta com carteiras
-        mantém exatamente uma principal; ao promover outra, a anterior vira secundária
-        automaticamente.
-      </p>
+        <div className="space-y-6">
+          <header className="flex flex-wrap items-center justify-between gap-4">
+            <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
+              Minhas carteiras
+            </h1>
+            <Botao type="button" onClick={() => definirCriando(true)} disabled={criando}>
+              Adicionar carteira
+            </Botao>
+          </header>
 
-      {carteiras.length === 0 && !criando ? (
-        <div className="rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-8 text-center">
-          <p className="text-titulo">Você ainda não cadastrou carteiras.</p>
-          <p className="mt-1 text-sm text-texto-suave">
-            Cadastre uma para conseguir concluir pagamentos.
+          <p className="text-sm text-texto-suave">
+            A carteira principal é usada como padrão no pagamento. Toda conta com
+            carteiras mantém exatamente uma principal; ao promover outra, a anterior vira
+            secundária automaticamente.
           </p>
+
+          {carteiras.length === 0 && !criando ? (
+            <div className="rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-8 text-center">
+              <p className="text-titulo">Você ainda não cadastrou carteiras.</p>
+              <p className="mt-1 text-sm text-texto-suave">
+                Cadastre uma para conseguir concluir pagamentos.
+              </p>
+            </div>
+          ) : null}
+
+          <ul className="grid items-start gap-4 xl:grid-cols-2">
+            {carteiras.map((carteira) => (
+              <li
+                key={carteira.id}
+                className={emEdicao === carteira.id ? 'xl:col-span-2' : undefined}
+              >
+                {emEdicao === carteira.id ? (
+                  <FormularioCarteira
+                    carteira={carteira}
+                    aoFechar={() => definirEmEdicao(null)}
+                  />
+                ) : (
+                  <CartaoCarteira
+                    carteira={carteira}
+                    aoEditar={() => definirEmEdicao(carteira.id)}
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {criando ? <FormularioCarteira aoFechar={() => definirCriando(false)} /> : null}
         </div>
-      ) : null}
-
-      <ul className="space-y-4">
-        {carteiras.map((carteira) => (
-          <li key={carteira.id}>
-            {emEdicao === carteira.id ? (
-              <FormularioCarteira
-                carteira={carteira}
-                aoFechar={() => definirEmEdicao(null)}
-              />
-            ) : (
-              <CartaoCarteira
-                carteira={carteira}
-                aoEditar={() => definirEmEdicao(carteira.id)}
-              />
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {criando ? <FormularioCarteira aoFechar={() => definirCriando(false)} /> : null}
+      </div>
     </main>
   )
 }

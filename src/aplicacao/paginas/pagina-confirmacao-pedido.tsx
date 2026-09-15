@@ -1,4 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router'
+import { CheckCircle2 } from 'lucide-react'
 
 import { formatarEth, multiplicarEth } from '@/biblioteca/dinheiro'
 import { Botao } from '@/componentes/ui/botao'
@@ -18,7 +19,7 @@ export function PaginaConfirmacaoPedido() {
         className="mx-auto max-w-3xl px-4 py-10 sm:px-6"
         aria-busy="true"
       >
-        <div className="h-72 animate-pulse rounded-[var(--raio-cartao)] bg-superficie motion-reduce:animate-none" />
+        <div className="h-72 animate-pulse bg-[#271712] motion-reduce:animate-none" />
         <span className="sr-only">Carregando pedido</span>
       </main>
     )
@@ -82,42 +83,52 @@ export function PaginaConfirmacaoPedido() {
   const { recibo } = pedido
 
   return (
-    <main id="conteudo" tabIndex={-1} className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <header className="mb-8 text-center">
-        <p className="text-sm font-bold uppercase tracking-[0.22em] text-sucesso">
-          Pagamento aprovado
-        </p>
-        <h1 className="mt-2 text-3xl font-black uppercase tracking-tight text-titulo">
-          Recibo do pedido
-        </h1>
-        <p className="mt-1 text-sm text-texto-suave">
-          Transação simulada {pedido.id} —{' '}
-          {new Date(pedido.criadoEm).toLocaleString('pt-BR')}
-          {pedido.carteiraId ? ` — carteira ${pedido.carteiraId}` : ''}
-        </p>
-      </header>
-
+    <main
+      id="conteudo"
+      tabIndex={-1}
+      className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/70 px-4 py-8 backdrop-blur-sm"
+    >
       <section
-        aria-label="Recibo"
-        className="rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-confirmacao"
+        className="w-full max-w-lg border border-[#54321e] bg-[#271712] p-6 shadow-[0_20px_50px_rgb(0_0_0_/_40%)] sm:p-8"
       >
-        <ul className="space-y-3">
+        <header className="text-center">
+          <CheckCircle2 aria-hidden="true" size={44} className="mx-auto text-sucesso" />
+          <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.22em] text-sucesso">
+            Pagamento aprovado
+          </p>
+          <h1
+            id="titulo-confirmacao"
+            className="mt-1 text-2xl font-black uppercase tracking-wide text-titulo"
+          >
+            Recibo do pedido
+          </h1>
+          <p className="mt-2 text-xs text-texto-suave">
+            Transação simulada {pedido.id} —{' '}
+            {new Date(pedido.criadoEm).toLocaleString('pt-BR')}
+            {pedido.carteiraId ? ` — carteira ${pedido.carteiraId}` : ''}
+          </p>
+        </header>
+
+        <ul className="mt-6 space-y-3 border-t border-[#54321e] pt-5">
           {recibo.itens.map((item) => (
             <li key={item.nftId} className="flex items-center justify-between gap-4">
               <div>
-                <p className="font-bold text-titulo">{item.nome}</p>
+                <p className="text-sm font-bold text-titulo">{item.nome}</p>
                 <p className="text-xs text-texto-suave">
                   {item.quantidade}× {formatarEth(item.precoUnitarioEth)}
                 </p>
               </div>
-              <p className="font-bold text-titulo">
+              <p className="text-sm font-bold text-titulo">
                 {formatarEth(multiplicarEth(item.precoUnitarioEth, item.quantidade))}
               </p>
             </li>
           ))}
         </ul>
 
-        <dl className="mt-5 space-y-1.5 border-t border-[var(--cor-borda)] pt-4 text-sm">
+        <dl className="mt-5 space-y-1.5 border-t border-[#54321e] pt-4 text-sm">
           <div className="flex justify-between">
             <dt className="text-texto">Subtotal</dt>
             <dd className="text-titulo">{formatarEth(recibo.subtotalEth)}</dd>
@@ -134,18 +145,18 @@ export function PaginaConfirmacaoPedido() {
           </div>
           <div className="flex justify-between text-base">
             <dt className="font-bold text-titulo">Total pago</dt>
-            <dd className="font-black text-destaque">{formatarEth(recibo.totalEth)}</dd>
+            <dd className="font-black text-acao">{formatarEth(recibo.totalEth)}</dd>
           </div>
         </dl>
-      </section>
 
-      <div className="mt-8 text-center">
-        <Botao comoFilho>
-          <Link to="/" search={filtrosPadrao}>
-            Continuar explorando
-          </Link>
-        </Botao>
-      </div>
+        <div className="mt-7">
+          <Botao comoFilho className="w-full rounded-none">
+            <Link to="/" search={filtrosPadrao}>
+              Continuar explorando
+            </Link>
+          </Botao>
+        </div>
+      </section>
     </main>
   )
 }

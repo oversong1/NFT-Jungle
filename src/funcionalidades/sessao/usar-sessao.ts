@@ -10,9 +10,9 @@ import {
 } from '@/funcionalidades/carrinho/identidade'
 import { cadastrar, entrar, obterSessao, sair } from '@/funcionalidades/sessao/api-sessao'
 import {
-  estaAutenticado,
   limparToken,
   salvarToken,
+  useEstaAutenticado,
 } from '@/funcionalidades/sessao/sessao-local'
 import { obterSocket } from '@/funcionalidades/tempo-real/socket'
 import type { Sessao } from '@/tipos/dominio'
@@ -23,10 +23,12 @@ import type { Sessao } from '@/tipos/dominio'
  * globalmente pelo interceptor + Provedores.
  */
 export function useSessao() {
+  const autenticado = useEstaAutenticado()
+
   return useQuery({
     queryKey: chaves.sessao,
     queryFn: obterSessao,
-    enabled: estaAutenticado(),
+    enabled: autenticado,
     staleTime: 0,
   })
 }

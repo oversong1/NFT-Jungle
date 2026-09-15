@@ -91,6 +91,34 @@ textarea {
   animation: deslizar-brilho 1.6s linear infinite;
 }
 
+/* Os dois controles sobrepostos formam o intervalo de preço e permanecem fluidos em qualquer largura. */
+.filtro-range {
+  appearance: none;
+  pointer-events: none;
+  background: transparent;
+}
+
+.filtro-range::-webkit-slider-thumb {
+  appearance: none;
+  pointer-events: auto;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 999px;
+  border: 2px solid #1c100b;
+  background: var(--cor-acao);
+  cursor: grab;
+}
+
+.filtro-range::-moz-range-thumb {
+  pointer-events: auto;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 999px;
+  border: 2px solid #1c100b;
+  background: var(--cor-acao);
+  cursor: grab;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .brilho-carregamento {
     animation: none;

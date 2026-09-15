@@ -1,5 +1,3 @@
-import Decimal from 'decimal.js'
-
 import type {
   Carteira,
   CategoriaNft,
@@ -44,6 +42,15 @@ const categorias: CategoriaNft[] = ['arte', 'colecionaveis', 'fotografia', 'musi
 const redes: RedeNft[] = ['ethereum', 'polygon', 'arbitrum']
 const raridades: RaridadeNft[] = ['comum', 'raro', 'epico', 'lendario']
 
+const obrasCatalogo = [
+  { nome: 'Emerald Ape #042', precoEth: '1.19', imagem: '/assets/nfts/emerald-ape.jpg' },
+  { nome: 'Sage Nomad #009', precoEth: '1.69', imagem: '/assets/nfts/sage-nomad.jpg' },
+  { nome: 'Neon Vessel #552', precoEth: '1.99', imagem: '/assets/nfts/neon-vessel.jpg' },
+  { nome: 'Cosmic Bloom #118', precoEth: '1.29', imagem: '/assets/nfts/emerald-ape.jpg' },
+  { nome: 'Violet Nomad #314', precoEth: '1.39', imagem: '/assets/nfts/sage-nomad.jpg' },
+  { nome: 'Ivory Baron #088', precoEth: '1.79', imagem: '/assets/nfts/neon-vessel.jpg' },
+] as const
+
 /**
  * 24 NFTs gerados de forma determinística: mesmos ids, preços e
  * atributos em toda máquina e a cada reset. Preço calculado com
@@ -53,20 +60,21 @@ export const nftsIniciais: Nft[] = Array.from({ length: 24 }, (_, indice) => {
   const numero = indice + 1
   const identificador = String(numero).padStart(2, '0')
   const colecao = numero <= 12 ? colecoesIniciais[0] : colecoesIniciais[1]
+  const obra = obrasCatalogo[indice % obrasCatalogo.length]
 
   return {
     id: `nft-${identificador}`,
     versao: 1,
     atualizadoEm: DATA_BASE,
-    nome: `Primate ${identificador}`,
-    descricao: `Arte ${identificador} da coleção ${colecao.nome}, cunhada na rede ${redes[indice % 3]}.`,
-    imagem: '/assets/nfts/arte-substituta.jpg',
+    nome: obra.nome,
+    descricao: `${obra.nome} é uma obra da coleção ${colecao.nome}, cunhada na rede ${redes[indice % 3]}.`,
+    imagem: obra.imagem,
     colecaoId: colecao.id,
     colecaoNome: colecao.nome,
     categoria: categorias[indice % 4],
     rede: redes[indice % 3],
     raridade: raridades[indice % 4],
-    precoEth: new Decimal('0.05').plus(new Decimal(indice).mul('0.017')).toFixed(3),
+    precoEth: obra.precoEth,
     edicao: {
       total: 50,
       // O NFT 07 nasce esgotado: caso obrigatório do desafio.
