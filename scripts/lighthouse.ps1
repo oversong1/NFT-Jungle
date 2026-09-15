@@ -9,7 +9,7 @@ npm run build
 
 New-Item -ItemType Directory -Force -Path "relatorios" | Out-Null
 
-$preview = Start-Process npm -ArgumentList "run","preview" -PassThru -WindowStyle Hidden
+$preview = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run preview" -PassThru -WindowStyle Hidden
 
 try {
   $pronto = $false
@@ -48,4 +48,8 @@ try {
   Write-Host "Pronto. 12 relatórios em relatorios/. Abra cada um e anote Performance/Acessibilidade/Boas práticas/SEO/LCP/CLS/TBT."
 } finally {
   Stop-Process -Id $preview.Id -Force -ErrorAction SilentlyContinue
+  # cmd.exe pode não derrubar o node filho junto; mata quem estiver na porta 4173.
+  Get-NetTCPConnection -LocalPort 4173 -ErrorAction SilentlyContinue |
+    Select-Object -ExpandProperty OwningProcess -Unique |
+    ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }
 }
