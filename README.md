@@ -41,8 +41,8 @@ Aplicação em [http://localhost:5173](http://localhost:5173) com mocks ativos.
 
 ## Variáveis de ambiente
 
-| Variável | Padrão | Efeito |
-| --- | --- | --- |
+| Variável          | Padrão                                         | Efeito                                                      |
+| ----------------- | ---------------------------------------------- | ----------------------------------------------------------- |
 | `VITE_USAR_MOCKS` | `true` (dev e produção, ver `.env.production`) | Liga o MSW e o transporte simulado de eventos em tempo real |
 
 ## Cenários simulados
@@ -93,18 +93,18 @@ automaticamente antes de cada caso (`testes/utilitarios/preparacao.ts`).
 
 ## Comandos
 
-| Comando | O que faz |
-| --- | --- |
-| `npm run dev` | desenvolvimento, com mocks ativos |
-| `npm run build` | build de produção (mocks ativos) |
-| `npm run preview` | serve o build gerado em http://localhost:4173 |
-| `npm run verificar-tipos` | checagem de tipos (`tsc -b`, inclui `testes/`) |
-| `npm run lint` | análise estática (oxlint) |
-| `npm run formatar` / `verificar-formato` | formatação (prettier --write / --check) |
-| `npm run testar` | suíte Playwright completa (desktop + mobile) |
-| `npm run testar-ui` | suíte em modo interativo |
-| `npm run testar-visual` | somente a regressão visual (`@visual`) |
-| `npm run atualizar-baselines` | regrava as baselines visuais (só após revisar o diff) |
+| Comando                                  | O que faz                                             |
+| ---------------------------------------- | ----------------------------------------------------- |
+| `npm run dev`                            | desenvolvimento, com mocks ativos                     |
+| `npm run build`                          | build de produção (mocks ativos)                      |
+| `npm run preview`                        | serve o build gerado em http://localhost:4173         |
+| `npm run verificar-tipos`                | checagem de tipos (`tsc -b`, inclui `testes/`)        |
+| `npm run lint`                           | análise estática (oxlint)                             |
+| `npm run formatar` / `verificar-formato` | formatação (prettier --write / --check)               |
+| `npm run testar`                         | suíte Playwright completa (desktop + mobile)          |
+| `npm run testar-ui`                      | suíte em modo interativo                              |
+| `npm run testar-visual`                  | somente a regressão visual (`@visual`)                |
+| `npm run atualizar-baselines`            | regrava as baselines visuais (só após revisar o diff) |
 
 ## Testes
 
