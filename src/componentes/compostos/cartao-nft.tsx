@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react'
+import { Heart, Search, ShoppingCart } from 'lucide-react'
 
 import { Botao } from '@/componentes/ui/botao'
 
@@ -6,66 +6,71 @@ export type DadosCartaoNft = {
   nome: string
   colecao: string
   precoEth: string
+  precoAnteriorEth?: string
   imagem: string
   raro?: boolean
   favorito?: boolean
 }
 
-type PropriedadesCartaoNft = DadosCartaoNft & {
-  aoAlternarFavorito?: () => void
-}
+type PropriedadesCartaoNft = DadosCartaoNft & { aoAlternarFavorito?: () => void }
 
 export function CartaoNft({
   nome,
   colecao,
   precoEth,
+  precoAnteriorEth,
   imagem,
   raro = false,
   favorito = false,
   aoAlternarFavorito,
 }: PropriedadesCartaoNft) {
   return (
-    <article className="group overflow-hidden rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie shadow-[var(--sombra-cartao)]">
-      <div className="relative aspect-square overflow-hidden bg-superficie-elevada">
+    <article className="group relative isolate bg-[#271712] p-2 [contain:paint] [transform:translateZ(0)] transition-transform duration-300 hover:-translate-y-1">
+      <div className="relative aspect-[.96] overflow-hidden bg-[#332018] [contain:strict]">
         <img
           src={imagem}
           alt={`Arte do NFT ${nome}`}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
         />
-
         {raro ? (
-          <span className="absolute left-3 top-3 rounded-full bg-fundo/80 px-3 py-1 text-xs font-bold text-destaque backdrop-blur-sm">
+          <span className="absolute left-0 top-0 bg-acao px-3 py-1.5 text-[10px] font-black uppercase text-[#160d09]">
             Raro
           </span>
         ) : null}
-
-        <Botao
-          type="button"
-          variante="secundaria"
-          tamanho="icone"
-          className="absolute right-3 top-3 rounded-full bg-fundo/80 p-0 backdrop-blur-sm"
-          aria-label={favorito ? `Remover ${nome} dos favoritos` : `Favoritar ${nome}`}
-          aria-pressed={favorito}
-          onClick={aoAlternarFavorito}
-        >
-          <Heart
-            aria-hidden="true"
-            className={favorito ? 'fill-destaque text-destaque' : ''}
-            size={18}
-          />
-        </Botao>
+        <div className="absolute bottom-2 right-2 hidden gap-1 group-hover:flex">
+          <span className="grid h-7 w-7 place-items-center bg-[#271712] text-titulo">
+            <ShoppingCart size={15} />
+          </span>
+          <Botao
+            type="button"
+            variante="secundaria"
+            tamanho="icone"
+            className="h-7 min-h-7 min-w-7 rounded-none border-[#68452c] bg-[#271712] p-0"
+            aria-label={favorito ? `Remover ${nome} dos favoritos` : `Favoritar ${nome}`}
+            aria-pressed={favorito}
+            onClick={aoAlternarFavorito}
+          >
+            <Heart
+              aria-hidden="true"
+              size={15}
+              className={favorito ? 'fill-destaque text-destaque' : ''}
+            />
+          </Botao>
+          <span className="grid h-7 w-7 place-items-center bg-[#271712] text-titulo">
+            <Search size={15} />
+          </span>
+        </div>
       </div>
-
-      <div className="space-y-1.5 p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-texto-suave">
-          {colecao}
-        </p>
-        <h2 className="truncate text-base font-bold text-titulo">{nome}</h2>
-        <p className="text-sm text-texto">
-          <span className="sr-only">Preço: </span>
-          {precoEth} ETH
-        </p>
-      </div>
+      <p className="mt-2 truncate text-[11px] font-medium text-[#e8dfd5]">{nome}</p>
+      <p className="mt-0.5 text-[11px] font-bold text-acao">
+        {precoEth} ETH
+        {precoAnteriorEth ? (
+          <span className="ml-1 font-medium text-[#a98057] line-through">
+            {precoAnteriorEth} ETH
+          </span>
+        ) : null}
+        {colecao ? <span className="sr-only">— {colecao}</span> : null}
+      </p>
     </article>
   )
 }
@@ -73,16 +78,13 @@ export function CartaoNft({
 export function EsqueletoCartaoNft() {
   return (
     <div
-      className="overflow-hidden rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie"
+      className="isolate bg-[#271712] p-2 [contain:paint]"
       aria-label="Carregando NFT"
       role="status"
     >
-      <div className="aspect-square brilho-carregamento" />
-      <div className="space-y-3 p-4">
-        <div className="h-3 w-2/5 rounded brilho-carregamento" />
-        <div className="h-5 w-4/5 rounded brilho-carregamento" />
-        <div className="h-4 w-1/3 rounded brilho-carregamento" />
-      </div>
+      <div className="aspect-[.96] brilho-carregamento" />
+      <div className="mt-3 h-3 w-3/5 brilho-carregamento" />
+      <div className="mt-2 h-3 w-1/3 brilho-carregamento" />
       <span className="sr-only">Carregando NFT</span>
     </div>
   )
