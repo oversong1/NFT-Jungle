@@ -4,6 +4,14 @@ Aplicação frontend para um marketplace de NFTs, construída com React, TypeScr
 
 Decisões de arquitetura, contratos de API, regras de negócio e limitações conhecidas estão documentadas em [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
+- Demonstração pública: _preencher após o deploy (ex.: https://kurio.vercel.app)_
+- Enunciado do desafio: https://github.com/junglegaming/frontend-challenge
+
+## Requisitos
+
+- Node.js 22.12 ou superior (ou Docker + Docker Compose)
+- npm 10 ou superior
+
 ## Rodar com Docker
 
 Pré-requisito: Docker Desktop instalado e em execução.
@@ -29,14 +37,74 @@ npm ci
 npm run dev
 ```
 
-## Verificações
+Aplicação em [http://localhost:5173](http://localhost:5173) com mocks ativos.
+
+## Variáveis de ambiente
+
+| Variável | Padrão | Efeito |
+| --- | --- | --- |
+| `VITE_USAR_MOCKS` | `true` (dev e produção, ver `.env.production`) | Liga o MSW e o transporte simulado de eventos em tempo real |
+
+## Cenários simulados
+
+O backend simulado (MSW) tem cenários nomeados que forçam comportamentos específicos —
+úteis para validar estados de erro, latência e fluxos de pagamento sem precisar
+manipular dados manualmente:
+
+```
+padrao, vazio, lento, sem-conexao, sessao-expirada, conflito-cadastro,
+preco-alterado, edicao-esgotada, pedido-atrasado, pedido-aprovado,
+pedido-recusado, timeout-pos-criacao
+```
+
+Ativação, por qualquer uma das duas vias:
+
+```js
+// console do navegador
+kurio.definirCenario('lento')
+location.reload()
+```
 
 ```bash
-npm run verificar-tipos
-npm run lint
-npm run build
-npm run testar
+# ajuste a porta conforme como a aplicação está rodando:
+# 5173 (npm run dev), 8080 (Docker) ou 4173 (npm run preview)
+curl -X POST http://localhost:5173/api/dev/cenario \
+  -H "Content-Type: application/json" \
+  -d '{"cenario":"lento"}'
 ```
+
+Eventos de tempo real de demonstração (preço mudou, edição esgotou, etc.) ficam
+disponíveis no painel flutuante **"Demonstração"** (canto inferior direito da tela)
+ou via `POST /api/dev/eventos`.
+
+## Reset dos dados
+
+O estado simulado (usuários, carrinhos, pedidos, carteiras) vive em `localStorage`
+(`kurio.mock.bd.v3`). Para voltar ao estado inicial:
+
+```js
+// console do navegador
+kurio.reiniciarBanco()
+location.reload()
+```
+
+Ou por requisição: `POST /api/dev/reset`. A suíte de testes E2E já faz esse reset
+automaticamente antes de cada caso (`testes/utilitarios/preparacao.ts`).
+
+## Comandos
+
+| Comando | O que faz |
+| --- | --- |
+| `npm run dev` | desenvolvimento, com mocks ativos |
+| `npm run build` | build de produção (mocks ativos) |
+| `npm run preview` | serve o build gerado em http://localhost:4173 |
+| `npm run verificar-tipos` | checagem de tipos (`tsc -b`, inclui `testes/`) |
+| `npm run lint` | análise estática (oxlint) |
+| `npm run formatar` / `verificar-formato` | formatação (prettier --write / --check) |
+| `npm run testar` | suíte Playwright completa (desktop + mobile) |
+| `npm run testar-ui` | suíte em modo interativo |
+| `npm run testar-visual` | somente a regressão visual (`@visual`) |
+| `npm run atualizar-baselines` | regrava as baselines visuais (só após revisar o diff) |
 
 ## Testes
 
