@@ -52,9 +52,7 @@ test('nova carteira cadastrada aparece como opção no checkout', async ({ page 
   await page.getByRole('button', { name: 'Adicionar carteira' }).click()
 
   await page.getByLabel('Apelido').fill('Carteira de testes')
-  await page
-    .getByLabel('Endereço')
-    .fill('0x1234567890abcdef1234567890abcdef12345678')
+  await page.getByLabel('Endereço').fill('0x1234567890abcdef1234567890abcdef12345678')
   await page.getByRole('button', { name: 'Cadastrar carteira' }).click()
 
   await expect(page.getByRole('heading', { name: 'Carteira de testes' })).toBeVisible()
@@ -75,9 +73,7 @@ test('promover uma carteira a principal rebaixa a anterior automaticamente', asy
 
   await page.getByRole('button', { name: 'Adicionar carteira' }).click()
   await page.getByLabel('Apelido').fill('Segunda carteira')
-  await page
-    .getByLabel('Endereço')
-    .fill('0xabcdef1234567890abcdef1234567890abcdef12')
+  await page.getByLabel('Endereço').fill('0xabcdef1234567890abcdef1234567890abcdef12')
   await page.getByLabel(/usar como carteira principal/i).check()
   await page.getByRole('button', { name: 'Cadastrar carteira' }).click()
 

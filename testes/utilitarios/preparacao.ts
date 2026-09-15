@@ -56,9 +56,9 @@ export async function entrar(page: Page, usuario: keyof typeof usuarios) {
   await page.getByLabel('E-mail').fill(credenciais.email)
   await page.getByLabel('Senha', { exact: true }).fill(credenciais.senha)
   await page.getByRole('button', { name: 'Entrar' }).click()
-  await expect(page.getByRole('navigation', { name: 'Navegação principal' })).toContainText(
-    'Sair',
-  )
+  await expect(
+    page.getByRole('navigation', { name: 'Navegação principal' }),
+  ).toContainText('Sair')
 }
 
 /** Lista os pedidos do usuário logado pela API simulada (verificação decisiva). */

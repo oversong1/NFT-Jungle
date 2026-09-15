@@ -184,32 +184,32 @@ sobre variedade de imagem.
   máquina que vai rodar a suíte, com `npm run atualizar-baselines` — eles
   dependem de fonte/anti-aliasing do sistema operacional onde nasceram.
 - **Vazamento visual do texto do Hero para dentro dos cartões do grid**
-  (o próprio texto de "SEJA DONO DO FUTURO DA ARTE DIGITAL" e do parágrafo
-  aparecendo, nítido e legível, sobre a área da imagem do primeiro cartão de
-  cada linha) foi confirmado como reproduzível no Chrome real do usuário,
-  mesmo após a primeira tentativa de correção (que adicionava `isolate`,
-  `[contain:strict]` e um `[transform:translateZ(0)]` sempre ativo no
-  cartão). Revisão de código (duas passagens independentes, incluindo
-  varredura de toda a árvore de `pagina-inicial.tsx`) não encontrou nenhum
-  caminho de JSX/CSS que produza essa sobreposição — o conteúdo do Hero e o
-  grid do catálogo não compartilham DOM, z-index nem posicionamento
-  absoluto/fixo. O padrão observado (texto nítido do Hero, recortado
-  exatamente nos limites da própria caixa do cartão, repetindo-se na mesma
-  coluna em mais de uma linha do grid) é consistente com um bug conhecido de
-  compositing por GPU do Chromium: forçar 24 cartões a terem sua própria
-  camada de composição sempre ativa (via `transform: translateZ(0)`) mais
-  `contain: strict` (que inclui `size`) é um gatilho documentado para
-  corrupção/reaproveitamento indevido de texturas de tile em GPUs
-  integradas, drivers mais antigos ou sessões remotas/virtualizadas —
-  exatamente o cenário de quem está rodando isso via área de trabalho
-  remota. Como correção, removemos o `translateZ(0)` sempre ativo e
-  trocamos `contain: strict` por `contain: paint` (contenção mais leve, sem
-  forçar uma camada de GPU permanente por cartão); `isolate` e
-  `contain: paint` foram mantidos por serem baratos (não forçam
-  compositing) e não terem relação com o sintoma. **Isso ainda não foi
-  validado no Chrome real do usuário** — se o vazamento persistir após essa
-  mudança, o próximo passo de diagnóstico definitivo é abrir
-  `chrome://settings` → Sistema → desativar "Usar aceleração de hardware
-  quando disponível", recarregar a página e verificar se o problema some
-  (isso confirmaria definitivamente causa de GPU/driver, e não algo no
-  código) — ou atualizar o driver de vídeo da máquina.
+  (o texto de "SEJA DONO DO FUTURO DA ARTE DIGITAL" aparecendo, nítido e
+  legível, sobre a área da imagem de alguns cartões, e uma barra preta
+  cobrindo parte da imagem em outros) foi diagnosticado errado nesta
+  sessão na primeira tentativa: chegamos a suspeitar (e a escrever aqui)
+  que fosse um artefato de composição de GPU do Chromium, e chegamos a
+  alterar CSS do cartão (`isolate`, `contain`, `transform`) com base nessa
+  hipótese. Estava errado, e o usuário fez bem em cobrar prova em vez de
+  aceitar a explicação.
+
+  A causa real: os próprios arquivos de imagem em
+  `public/assets/nfts/emerald-ape.jpg` e `public/assets/nfts/sage-nomad.jpg`
+  estavam corrompidos — não eram fotos de NFT, eram capturas de tela da
+  própria página (uma continha literalmente o texto do Hero renderizado
+  como pixels da imagem; a outra continha um recorte de tela já com a
+  barra preta). Isso só foi descoberto abrindo os arquivos `.jpg`
+  diretamente (a verificação anterior nesta sessão só tinha conferido as
+  *dimensões* dos arquivos com PIL, nunca o conteúdo visual — esse foi o
+  erro de verificação). Como `fixtures.ts` reaproveita essas duas imagens
+  em mais de um NFT (`Emerald Ape`/`Cosmic Bloom` e `Sage Nomad`/
+  `Violet Nomad`), o defeito aparecia em várias posições do grid, sempre
+  nas mesmas duas colunas — o que parecia (e não era) um padrão de bug de
+  renderização do navegador.
+
+  Corrigido substituindo os dois arquivos pelos retratos corretos já
+  existentes no projeto (`primate-02.jpg` e `primate-03.jpg`, cópias
+  simples, sem gerar arte nova). `EsqueletoCartaoNft` e o cartão mantêm
+  `isolate`/`contain:paint` por serem inofensivos, mas o `translateZ(0)` e
+  `contain:strict` adicionados na tentativa anterior foram removidos por
+  não terem nenhuma relação com o problema real.

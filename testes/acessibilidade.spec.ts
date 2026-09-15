@@ -57,8 +57,10 @@ test('falha de rede no detalhe do NFT mostra "Tentar novamente"', async ({ page 
   await definirCenario(page, 'sem-conexao')
   await page.goto('/nfts/nft-01')
 
-  await expect(page.getByRole('heading', { name: 'Erro ao carregar o NFT' })).toBeVisible({
-    timeout: 15_000,
-  })
+  await expect(page.getByRole('heading', { name: 'Erro ao carregar o NFT' })).toBeVisible(
+    {
+      timeout: 15_000,
+    },
+  )
   await expect(page.getByRole('button', { name: 'Tentar novamente' })).toBeVisible()
 })

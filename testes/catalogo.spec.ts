@@ -62,9 +62,7 @@ test('busca por nome filtra o catálogo e reflete na URL', async ({ page }) => {
 
 test('voltar do navegador restaura filtros anteriores', async ({ page }) => {
   await page.goto('/?rede=ethereum&pagina=2')
-  await page
-    .getByRole('combobox', { name: 'Ordenar resultados' })
-    .selectOption('nome')
+  await page.getByRole('combobox', { name: 'Ordenar resultados' }).selectOption('nome')
   await expect(page).toHaveURL(/ordenacao=nome/)
 
   await page.goBack()

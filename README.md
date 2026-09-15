@@ -54,7 +54,7 @@ npm run testar-visual   # somente a regressão visual (@visual)
 
 ### Regressão visual
 
-`testes/visual.spec.ts` compara *screenshots* de início, detalhe, carrinho e
+`testes/visual.spec.ts` compara _screenshots_ de início, detalhe, carrinho e
 pagamento contra baselines commitadas em `testes/`. As baselines **ainda não
 foram geradas** nesta entrega — gere-as uma vez, localmente, antes de rodar a
 suíte pela primeira vez:
@@ -84,12 +84,12 @@ npm run preview
 npx lighthouse http://localhost:4173/ --output html --output-path relatorios/inicio-mobile.html
 ```
 
-| Página | Modo | Performance | Acessibilidade | Boas práticas | SEO | LCP | CLS | TBT |
-|---|---|---|---|---|---|---|---|---|
-| Início | mobile | — | — | — | — | — | — | — |
-| Início | desktop | — | — | — | — | — | — | — |
-| Detalhe | mobile | — | — | — | — | — | — | — |
-| Detalhe | desktop | — | — | — | — | — | — | — |
+| Página  | Modo    | Performance | Acessibilidade | Boas práticas | SEO | LCP | CLS | TBT |
+| ------- | ------- | ----------- | -------------- | ------------- | --- | --- | --- | --- |
+| Início  | mobile  | —           | —              | —             | —   | —   | —   | —   |
+| Início  | desktop | —           | —              | —             | —   | —   | —   | —   |
+| Detalhe | mobile  | —           | —              | —             | —   | —   | —   | —   |
+| Detalhe | desktop | —           | —              | —             | —   | —   | —   | —   |
 
 Metas do desafio: performance ≥ 90, acessibilidade ≥ 95, boas práticas ≥ 95, SEO ≥ 90.
 
