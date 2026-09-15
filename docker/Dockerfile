@@ -1,14 +1,12 @@
-FROM node:24-alpine
-
-# Diretório de trabalho dentro do contêiner; todos os comandos rodam a partir daqui
+FROM node:24-alpine AS construcao
 WORKDIR /app
-
 COPY package.json package-lock.json ./
-
-RUN npm ci
-
+RUN npm ci --legacy-peer-deps
 COPY . .
+RUN npm run build
 
-EXPOSE 5173
-
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+FROM nginx:1.27-alpine
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=construcao /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

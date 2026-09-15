@@ -3,12 +3,6 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: npm run dev -- --host 0.0.0.0
     ports:
-      - '5173:5173'
-    volumes:
-      # Bind mount: espelha a pasta do projeto (Windows) dentro do contêiner.
-      # É isso que faz uma edição no editor aparecer no navegador sem rebuild.
-      - .:/app
-      # Volume anônimo: "cobre" /app/node_modules dentro do contêiner.
-      - /app/node_modules
+      - '8080:80'
+    restart: unless-stopped
