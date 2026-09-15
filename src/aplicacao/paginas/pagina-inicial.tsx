@@ -218,6 +218,12 @@ export function PaginaInicial() {
                   </option>
                 ))}
             </select>
+
+            {consulta.isFetching && !consulta.isPending ? (
+              <p className="text-xs text-texto-suave" role="status">
+                Atualizando resultados…
+              </p>
+            ) : null}
           </div>
           {chips.length > 0 ? (
             <ul className="mb-3 flex flex-wrap gap-2">
@@ -242,7 +248,7 @@ export function PaginaInicial() {
           ) : null}
           {consulta.isPending ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {Array.from({ length: 6 }, (_, indice) => (
+              {Array.from({ length: 8 }, (_, indice) => (
                 <EsqueletoCartaoNft key={indice} />
               ))}
             </div>

@@ -31,6 +31,14 @@ export function definirCenario(cenario: Cenario): void {
   localStorage.setItem(CHAVE_CENARIO, cenario)
 }
 
+/** Sorteia um atraso dentro da faixa — é isso que permite respostas saírem
+ * fora de ordem: duas requisições disparadas em sequência podem terminar em
+ * qualquer ordem, exercitando o mesmo jeito que uma rede real se comporta
+ * (e o motivo de todo recurso versionado descartar resposta atrasada). */
+function atrasoAleatorioEntre(minimoMs: number, maximoMs: number): number {
+  return minimoMs + Math.random() * (maximoMs - minimoMs)
+}
+
 /**
  * Passo inicial de todo handler: aplica a latência do cenário e devolve
  * uma resposta pronta quando o cenário derruba a requisição inteira.
@@ -41,7 +49,11 @@ export async function iniciarRequisicao(): Promise<{
 }> {
   const cenario = obterCenario()
 
-  await delay(cenario === 'lento' ? 2500 : 300)
+  await delay(
+    cenario === 'lento'
+      ? atrasoAleatorioEntre(1800, 3200)
+      : atrasoAleatorioEntre(150, 450),
+  )
 
   if (cenario === 'sem-conexao') {
     // HttpResponse.error() simula falha de rede: o Axios recebe erro
