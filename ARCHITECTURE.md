@@ -157,6 +157,26 @@ capas do catálogo reaproveitam um pequeno conjunto de fotos de exemplo
 aparece em NFTs diferentes de propósito, priorizando fidelidade de layout
 sobre variedade de imagem.
 
+## Responsividade — inferências sem frame de referência
+
+O material de referência (`Mobile/`) só tem frame para 6 telas: Início,
+Detalhe do NFT, Carrinho, Pagamento, Login e Cadastro. Perfil, Carteiras e
+Confirmação de pedido não têm frame mobile correspondente — a Fase 12 do
+guia pede explicitamente para registrar aqui qualquer adaptação que seja
+inferência por falta de frame. As três seguem, por inferência, o mesmo
+padrão das telas que têm frame:
+
+- **Perfil e Carteiras**: mesma grade `lg:grid-cols-[280px_1fr]` das demais
+  telas com sidebar (o próprio breakpoint único do app, 1024 px). Abaixo
+  disso a sidebar (`PainelConta`) empilha acima do formulário, sem grade
+  lateral — não existe layout mobile dedicado além disso, porque o mockup
+  de Carteiras (imagem 09, desktop) já não tem elemento algum que dependa
+  de largura de tela para funcionar.
+- **Confirmação de pedido**: nunca teve grade de duas colunas nem no
+  desktop (é um cartão único centralizado, `max-w-lg`), então não muda
+  estrutura entre larguras — só a margem lateral (`px-4`) responde ao
+  espaço disponível.
+
 ## Limitações conhecidas
 
 - **Perfil e Carteiras** ainda usam os tokens de cor genéricos da fundação
