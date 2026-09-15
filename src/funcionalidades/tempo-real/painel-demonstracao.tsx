@@ -19,6 +19,15 @@ export function PainelDemonstracaoTempoReal() {
     }
   }
 
+  async function reiniciar() {
+    try {
+      await clienteHttp.post('/dev/reset', {})
+      window.location.reload()
+    } catch {
+      definirUltimaAcao('Falha ao reiniciar os dados.')
+    }
+  }
+
   if (!aberto) {
     return (
       <div className="fixed bottom-4 right-4 z-50">
@@ -100,6 +109,15 @@ export function PainelDemonstracaoTempoReal() {
           Permitir reconexão
         </Botao>
       </div>
+      <Botao
+        type="button"
+        tamanho="pequeno"
+        variante="primaria"
+        className="w-full"
+        onClick={() => void reiniciar()}
+      >
+        Reiniciar dados de demonstração
+      </Botao>
       <p role="status" aria-live="polite" className="min-h-4 text-xs text-texto-suave">
         {ultimaAcao}
       </p>

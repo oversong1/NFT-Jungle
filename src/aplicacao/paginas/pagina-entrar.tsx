@@ -64,14 +64,23 @@ export function PaginaEntrar() {
           erro={errors.email?.message}
           {...register('email')}
         />
-        <CampoTexto
-          id="entrar-senha"
-          rotulo="Senha"
-          type="password"
-          autoComplete="current-password"
-          erro={errors.senha?.message}
-          {...register('senha')}
-        />
+        <div className="flex flex-col gap-1.5">
+          <CampoTexto
+            id="entrar-senha"
+            rotulo="Senha"
+            type="password"
+            autoComplete="current-password"
+            erro={errors.senha?.message}
+            {...register('senha')}
+          />
+          <span
+            aria-hidden="true"
+            title="Não implementado nesta entrega — não há fluxo de recuperação de senha por e-mail."
+            className="self-end text-xs font-bold text-texto-suave"
+          >
+            Esqueceu a senha?
+          </span>
+        </div>
 
         {errors.root ? (
           <p
