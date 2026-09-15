@@ -111,7 +111,7 @@ tela) e, para pedidos, ignora eventos de outro usuário. Na reconexão
 (`socket.io.on('reconnect', ...)`), a reconciliação é sempre feita pelo REST
 — o evento é só um sinal para invalidar, nunca a fonte de verdade do estado
 completo. **Limitação conhecida:** por depender só do transporte WebSocket
-do binding, não há um caminho de *fallback* por polling caso o WebSocket seja
+do binding, não há um caminho de _fallback_ por polling caso o WebSocket seja
 bloqueado pela rede.
 
 ## Idempotência de pedidos
@@ -142,7 +142,7 @@ rebaixa a anterior na mesma escrita; tentar rebaixar a única principal
 existente (sem promover outra primeiro) responde `422`; excluir a principal
 com outras carteiras disponíveis responde `409 PRINCIPAL_PROTEGIDA`. O
 avatar é validado no cliente (tipo e tamanho, `funcionalidades/perfil/
-esquemas.ts`) e persistido como *data URL* no banco simulado — não há
+esquemas.ts`) e persistido como _data URL_ no banco simulado — não há
 upload real. A troca de senha nunca ecoa a senha: `POST /api/perfil/senha`
 responde `204` sem corpo.
 
@@ -183,9 +183,33 @@ sobre variedade de imagem.
   mas os arquivos de referência (`*.png`) precisam ser gerados uma vez, na
   máquina que vai rodar a suíte, com `npm run atualizar-baselines` — eles
   dependem de fonte/anti-aliasing do sistema operacional onde nasceram.
-- `EsqueletoCartaoNft` e o cartão de NFT ganharam recentemente `isolate` e
-  `[contain:paint]` como proteção contra um artefato de composição do Chrome
-  (conteúdo de outra parte da página "vazando" visualmente para dentro do
-  cartão) observado neste ambiente — não foi encontrada nenhuma causa no
-  código-fonte para esse sintoma; tudo indica um artefato de renderização
-  do navegador em ambiente remoto/VM, não um bug de lógica.
+- **Vazamento visual do texto do Hero para dentro dos cartões do grid**
+  (o próprio texto de "SEJA DONO DO FUTURO DA ARTE DIGITAL" e do parágrafo
+  aparecendo, nítido e legível, sobre a área da imagem do primeiro cartão de
+  cada linha) foi confirmado como reproduzível no Chrome real do usuário,
+  mesmo após a primeira tentativa de correção (que adicionava `isolate`,
+  `[contain:strict]` e um `[transform:translateZ(0)]` sempre ativo no
+  cartão). Revisão de código (duas passagens independentes, incluindo
+  varredura de toda a árvore de `pagina-inicial.tsx`) não encontrou nenhum
+  caminho de JSX/CSS que produza essa sobreposição — o conteúdo do Hero e o
+  grid do catálogo não compartilham DOM, z-index nem posicionamento
+  absoluto/fixo. O padrão observado (texto nítido do Hero, recortado
+  exatamente nos limites da própria caixa do cartão, repetindo-se na mesma
+  coluna em mais de uma linha do grid) é consistente com um bug conhecido de
+  compositing por GPU do Chromium: forçar 24 cartões a terem sua própria
+  camada de composição sempre ativa (via `transform: translateZ(0)`) mais
+  `contain: strict` (que inclui `size`) é um gatilho documentado para
+  corrupção/reaproveitamento indevido de texturas de tile em GPUs
+  integradas, drivers mais antigos ou sessões remotas/virtualizadas —
+  exatamente o cenário de quem está rodando isso via área de trabalho
+  remota. Como correção, removemos o `translateZ(0)` sempre ativo e
+  trocamos `contain: strict` por `contain: paint` (contenção mais leve, sem
+  forçar uma camada de GPU permanente por cartão); `isolate` e
+  `contain: paint` foram mantidos por serem baratos (não forçam
+  compositing) e não terem relação com o sintoma. **Isso ainda não foi
+  validado no Chrome real do usuário** — se o vazamento persistir após essa
+  mudança, o próximo passo de diagnóstico definitivo é abrir
+  `chrome://settings` → Sistema → desativar "Usar aceleração de hardware
+  quando disponível", recarregar a página e verificar se o problema some
+  (isso confirmaria definitivamente causa de GPU/driver, e não algo no
+  código) — ou atualizar o driver de vídeo da máquina.

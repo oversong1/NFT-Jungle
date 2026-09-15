@@ -25,8 +25,8 @@ export function CartaoNft({
   aoAlternarFavorito,
 }: PropriedadesCartaoNft) {
   return (
-    <article className="group relative isolate bg-[#271712] p-2 [contain:paint] [transform:translateZ(0)] transition-transform duration-300 hover:-translate-y-1">
-      <div className="relative aspect-[.96] overflow-hidden bg-[#332018] [contain:strict]">
+    <article className="group relative isolate bg-[#271712] p-2 [contain:paint] transition-transform duration-300 hover:-translate-y-1">
+      <div className="relative aspect-[.96] overflow-hidden bg-[#332018] [contain:paint]">
         <img
           src={imagem}
           alt={`Arte do NFT ${nome}`}
