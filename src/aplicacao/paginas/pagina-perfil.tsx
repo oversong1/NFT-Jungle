@@ -249,7 +249,7 @@ function FormularioSenha() {
             {erros.root.message}
           </p>
         ) : null}
-        {trocarSenha.isSuccess ? (
+        {trocarSenha.isSuccess && !formulario.formState.isDirty ? (
           <p role="status" className="text-sm font-semibold text-sucesso">
             Senha alterada.
           </p>

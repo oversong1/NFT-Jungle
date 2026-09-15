@@ -413,11 +413,21 @@ export function PaginaCarrinho() {
               </dl>
             ) : null}
 
-            <Botao comoFilho className="w-full rounded-none">
+            <Botao
+              comoFilho
+              className={`w-full rounded-none ${
+                !cotacao.data ? 'pointer-events-none opacity-50' : ''
+              }`}
+            >
               <Link
                 to="/pagamento"
                 search={{ cupom: cotacao.data?.cupomAplicado ?? undefined }}
                 aria-disabled={!cotacao.data}
+                onClick={(evento) => {
+                  if (!cotacao.data) {
+                    evento.preventDefault()
+                  }
+                }}
               >
                 Continuar para pagamento
               </Link>
