@@ -13,7 +13,7 @@ async function prepararMocks(): Promise<void> {
   await worker.start({ onUnhandledRequest: 'bypass' })
 }
 
-void prepararMocks().then(() => {
+function renderizarAplicacao(): void {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <Provedores>
@@ -21,4 +21,13 @@ void prepararMocks().then(() => {
       </Provedores>
     </StrictMode>,
   )
-})
+}
+
+void prepararMocks()
+  .catch((erro: unknown) => {
+    // Se o Service Worker do MSW não registrar (extensões de navegador,
+    // navegação anônima restrita, etc.), a aplicação ainda deve subir —
+    // sem mocks a API simplesmente responderá com falha de rede.
+    console.error('[Kurio] Falha ao preparar os mocks; seguindo sem eles.', erro)
+  })
+  .then(renderizarAplicacao)
