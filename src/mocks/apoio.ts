@@ -40,7 +40,7 @@ export function autenticar(request: Request): Usuario | null {
 
 /**
  * Identidade do carrinho: usuário logado ou visitante anônimo
- * (cabeçalho x-identidade-anonima, gerado pelo cliente na Fase 8).
+ * (cabeçalho x-identidade-anonima, gerado pelo cliente).
  */
 export function identidadeDaRequisicao(request: Request): string {
   const usuario = autenticar(request)

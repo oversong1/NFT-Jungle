@@ -117,6 +117,7 @@ export type Pedido = {
   versao: number
   atualizadoEm: string
   usuarioId: string
+  carteiraId: string | null
   status: StatusPedido
   criadoEm: string
   recibo: Recibo

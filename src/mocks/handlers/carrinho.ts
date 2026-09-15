@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 
 import {
+  autenticar,
   calcularCotacao,
   ehErroApi,
   erroApi,
@@ -97,5 +98,51 @@ export const handlersCarrinho = [
       return erroApi(cotacao.status, cotacao.codigo, cotacao.mensagem, cotacao.campos)
     }
     return HttpResponse.json(cotacao)
+  }),
+
+  // Mescla o carrinho de visitante no carrinho do usuário após o login.
+  http.post('/api/carrinho/mesclar', async ({ request }) => {
+    const { respostaImediata } = await iniciarRequisicao()
+    if (respostaImediata) return respostaImediata
+
+    const usuario = autenticar(request)
+    if (!usuario) {
+      return erroApi(401, 'SESSAO_INVALIDA', 'Faça login para mesclar o carrinho.')
+    }
+
+    const corpo = (await request.json().catch(() => ({}))) as {
+      identidadeAnonima?: string
+    }
+
+    const identidadeUsuario = `usuario:${usuario.id}`
+    const destino = obterCarrinho(identidadeUsuario)
+    const banco = obterBanco()
+
+    const chaveVisitante = corpo.identidadeAnonima
+      ? `anonimo:${corpo.identidadeAnonima}`
+      : null
+    const origem = chaveVisitante ? banco.carrinhos[chaveVisitante] : undefined
+
+    if (chaveVisitante && origem) {
+      for (const item of origem.itens) {
+        const nft = banco.nfts.find((registro) => registro.id === item.nftId)
+        if (!nft) continue
+
+        const existente = destino.itens.find((registro) => registro.nftId === item.nftId)
+        // Quantidades se somam, limitadas pelo estoque disponível.
+        const quantidade = Math.min(
+          (existente?.quantidade ?? 0) + item.quantidade,
+          nft.edicao.disponiveis,
+        )
+        if (quantidade < 1) continue
+
+        if (existente) existente.quantidade = quantidade
+        else destino.itens.push({ nftId: item.nftId, quantidade })
+      }
+      // O carrinho de visitante deixa de existir após a mesclagem.
+      delete banco.carrinhos[chaveVisitante]
+    }
+
+    return HttpResponse.json(tocarCarrinho(identidadeUsuario))
   }),
 ]

@@ -73,15 +73,15 @@ export function CartaoNft({
 export function EsqueletoCartaoNft() {
   return (
     <div
-      className="animate-pulse overflow-hidden rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie motion-reduce:animate-none"
+      className="overflow-hidden rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie"
       aria-label="Carregando NFT"
       role="status"
     >
-      <div className="aspect-square bg-superficie-elevada" />
+      <div className="aspect-square brilho-carregamento" />
       <div className="space-y-3 p-4">
-        <div className="h-3 w-2/5 rounded bg-superficie-elevada" />
-        <div className="h-5 w-4/5 rounded bg-superficie-elevada" />
-        <div className="h-4 w-1/3 rounded bg-superficie-elevada" />
+        <div className="h-3 w-2/5 rounded brilho-carregamento" />
+        <div className="h-5 w-4/5 rounded brilho-carregamento" />
+        <div className="h-4 w-1/3 rounded brilho-carregamento" />
       </div>
       <span className="sr-only">Carregando NFT</span>
     </div>

@@ -70,3 +70,29 @@ textarea {
   outline: 3px solid var(--cor-destaque);
   outline-offset: 3px;
 }
+
+@keyframes deslizar-brilho {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.brilho-carregamento {
+  background-image: linear-gradient(
+    100deg,
+    var(--cor-superficie-elevada) 40%,
+    rgb(247 243 236 / 8%) 50%,
+    var(--cor-superficie-elevada) 60%
+  );
+  background-size: 200% 100%;
+  animation: deslizar-brilho 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brilho-carregamento {
+    animation: none;
+  }
+}

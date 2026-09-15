@@ -41,7 +41,7 @@ export function PaginaEntrar() {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 py-16 sm:px-6">
+    <main id="conteudo" tabIndex={-1} className="mx-auto max-w-md px-4 py-16 sm:px-6">
       <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">Entrar</h1>
       <p className="mt-2 text-sm text-texto">
         Use a conta de demonstração: aline@kurio.dev / Kurio@123

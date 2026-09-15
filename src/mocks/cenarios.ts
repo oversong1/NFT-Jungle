@@ -12,6 +12,7 @@ export const cenariosDisponiveis = [
   'pedido-atrasado',
   'pedido-aprovado',
   'pedido-recusado',
+  'timeout-pos-criacao',
 ] as const
 
 export type Cenario = (typeof cenariosDisponiveis)[number]

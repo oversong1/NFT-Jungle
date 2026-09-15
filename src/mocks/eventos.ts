@@ -9,8 +9,8 @@ type Ouvinte<T> = (dados: T) => void
 
 /**
  * Barramento em memória que faz o papel do servidor Socket.IO.
- * Handlers REST emitem aqui; na Fase 9 o cliente de tempo real
- * assina estes eventos quando os mocks estão ativos.
+ * Handlers REST emitem aqui; o cliente de tempo real assina
+ * estes eventos quando os mocks estão ativos.
  */
 class EmissorEventos {
   private ouvintes = new Map<keyof EventosServidor, Set<Ouvinte<never>>>()

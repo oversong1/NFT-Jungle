@@ -17,9 +17,10 @@ export type BancoMock = {
   carrinhos: Record<string, Carrinho>
   pedidos: Pedido[]
   carteiras: Carteira[]
+  idempotencia: Record<string, { pedidoId: string; hash: string }>
 }
 
-const CHAVE_BANCO = 'kurio.mock.bd.v1'
+const CHAVE_BANCO = 'kurio.mock.bd.v2'
 
 function criarBancoInicial(): BancoMock {
   return {
@@ -31,6 +32,7 @@ function criarBancoInicial(): BancoMock {
     carrinhos: {},
     pedidos: [],
     carteiras: structuredClone(carteirasIniciais),
+    idempotencia: {},
   }
 }
 

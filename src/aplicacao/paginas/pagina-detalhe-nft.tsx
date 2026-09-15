@@ -1,10 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { Heart, Minus, Plus } from 'lucide-react'
 import { useState } from 'react'
 
 import { Botao } from '@/componentes/ui/botao'
-import { definirItemCarrinho } from '@/funcionalidades/carrinho/api-carrinho'
+import { useDefinirItemCarrinho } from '@/funcionalidades/carrinho/usar-carrinho'
 import { filtrosPadrao } from '@/funcionalidades/catalogo/esquema-filtros'
 import {
   rotulosCategoria,
@@ -33,19 +32,16 @@ export function PaginaDetalheNft() {
   const [quantidade, definirQuantidade] = useState(1)
   const [mensagem, definirMensagem] = useState('')
 
-  const incluirNoCarrinho = useMutation({
-    mutationFn: () => definirItemCarrinho(nftId, quantidade),
-    onSuccess: () => definirMensagem('Item incluído no carrinho.'),
-    onError: (erro) => {
-      // O interceptor da Fase 6 garante que toda falha chega como ErroApi.
-      const erroApi = erro as unknown as ErroApi
-      definirMensagem(erroApi.mensagem)
-    },
-  })
+  const incluirNoCarrinho = useDefinirItemCarrinho()
 
   if (consulta.isPending) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6" aria-busy="true">
+      <main
+        id="conteudo"
+        tabIndex={-1}
+        className="mx-auto max-w-5xl px-4 py-10 sm:px-6"
+        aria-busy="true"
+      >
         <div className="grid animate-pulse grid-cols-1 gap-10 md:grid-cols-2 motion-reduce:animate-none">
           <div className="aspect-square rounded-[var(--raio-cartao)] bg-superficie-elevada" />
           <div className="space-y-4">
@@ -65,7 +61,11 @@ export function PaginaDetalheNft() {
 
     if (erroApi.status === 404) {
       return (
-        <main className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
+        <main
+          id="conteudo"
+          tabIndex={-1}
+          className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6"
+        >
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-destaque">
             Erro 404
           </p>
@@ -85,7 +85,12 @@ export function PaginaDetalheNft() {
     }
 
     return (
-      <main className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6" role="alert">
+      <main
+        id="conteudo"
+        tabIndex={-1}
+        className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6"
+        role="alert"
+      >
         <h1 className="text-3xl font-black uppercase tracking-tight text-titulo">
           Erro ao carregar o NFT
         </h1>
@@ -111,7 +116,7 @@ export function PaginaDetalheNft() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+    <main id="conteudo" tabIndex={-1} className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <nav aria-label="Trilha de navegação" className="mb-6 text-sm text-texto-suave">
         <Link to="/" search={filtrosPadrao} className="hover:text-titulo">
           Catálogo
@@ -218,7 +223,17 @@ export function PaginaDetalheNft() {
             <Botao
               type="button"
               disabled={esgotado || incluirNoCarrinho.isPending}
-              onClick={() => incluirNoCarrinho.mutate()}
+              onClick={() =>
+                incluirNoCarrinho.mutate(
+                  { nftId, quantidade },
+                  {
+                    onSuccess: () => definirMensagem('Item incluído no carrinho.'),
+                    // O interceptor normaliza toda falha para o formato ErroApi.
+                    onError: (erro) =>
+                      definirMensagem((erro as unknown as ErroApi).mensagem),
+                  },
+                )
+              }
             >
               {esgotado
                 ? 'Indisponível'

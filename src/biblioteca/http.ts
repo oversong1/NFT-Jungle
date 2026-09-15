@@ -3,6 +3,8 @@ import axios, { AxiosError } from 'axios'
 import { limparToken, obterToken } from '@/funcionalidades/sessao/sessao-local'
 import type { ErroApi } from '@/tipos/api'
 
+import { obterIdentidadeAnonima } from '@/funcionalidades/carrinho/identidade'
+
 /** Única instância Axios da aplicação. Nenhum módulo cria outra. */
 export const clienteHttp = axios.create({
   baseURL: '/api',
@@ -15,6 +17,8 @@ clienteHttp.interceptors.request.use((configuracao) => {
   if (token) {
     configuracao.headers.Authorization = `Bearer ${token}`
   }
+  // Visitante tem carrinho próprio; com sessão ativa o servidor ignora este cabeçalho.
+  configuracao.headers['x-identidade-anonima'] = obterIdentidadeAnonima()
   return configuracao
 })
 

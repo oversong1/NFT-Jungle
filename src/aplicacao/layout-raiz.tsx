@@ -1,10 +1,17 @@
 import { Link, Outlet } from '@tanstack/react-router'
 
 import { MenuSessao } from '@/funcionalidades/sessao/menu-sessao'
+import { PainelDemonstracaoTempoReal } from '@/funcionalidades/tempo-real/painel-demonstracao'
 
 export function LayoutRaiz() {
   return (
     <div className="min-h-screen bg-fundo">
+      <a
+        href="#conteudo"
+        className="sr-only rounded-full bg-acao px-5 py-2.5 font-bold text-fundo focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
+      >
+        Pular para o conteúdo
+      </a>
       <header className="border-b border-[var(--cor-borda)]">
         <nav
           aria-label="Navegação principal"
@@ -49,6 +56,7 @@ export function LayoutRaiz() {
         </nav>
       </header>
       <Outlet />
+      <PainelDemonstracaoTempoReal />
     </div>
   )
 }

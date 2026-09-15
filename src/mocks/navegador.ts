@@ -3,8 +3,9 @@ import { setupWorker } from 'msw/browser'
 import { reiniciarBanco } from '@/mocks/armazenamento'
 import { cenariosDisponiveis, definirCenario, obterCenario } from '@/mocks/cenarios'
 import { todosHandlers } from '@/mocks/handlers/indice'
+import { handlersTempoReal } from '@/mocks/tempo-real'
 
-export const worker = setupWorker(...todosHandlers)
+export const worker = setupWorker(...todosHandlers, ...handlersTempoReal)
 
 /**
  * Ferramentas manuais de teste, disponíveis no console do navegador:

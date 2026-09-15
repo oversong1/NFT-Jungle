@@ -9,20 +9,18 @@ import { z } from 'zod'
 
 import { LayoutRaiz } from '@/aplicacao/layout-raiz'
 import { PaginaInicial } from '@/aplicacao/paginas/pagina-inicial'
-import {
-  PaginaCarrinho,
-  PaginaCarteiras,
-  PaginaConfirmacaoPedido,
-  PaginaNaoEncontrada,
-  PaginaPagamento,
-  PaginaPerfil,
-} from '@/aplicacao/paginas/provisorias'
+import { PaginaNaoEncontrada } from '@/aplicacao/paginas/provisorias'
 import { esquemaFiltrosCatalogo } from '@/funcionalidades/catalogo/esquema-filtros'
 import { estaAutenticado } from '@/funcionalidades/sessao/sessao-local'
 
 import { PaginaCadastro } from '@/aplicacao/paginas/pagina-cadastro'
+import { PaginaCarrinho } from '@/aplicacao/paginas/pagina-carrinho'
 import { PaginaEntrar } from '@/aplicacao/paginas/pagina-entrar'
 import { PaginaDetalheNft } from '@/aplicacao/paginas/pagina-detalhe-nft'
+import { PaginaPagamento } from '@/aplicacao/paginas/pagina-pagamento'
+import { PaginaPerfil } from '@/aplicacao/paginas/pagina-perfil'
+import { PaginaCarteiras } from '@/aplicacao/paginas/pagina-carteiras'
+import { PaginaConfirmacaoPedido } from '@/aplicacao/paginas/pagina-confirmacao-pedido'
 
 /**
  * Guarda de rota privada. Se não há sessão, redireciona para /entrar
@@ -33,6 +31,11 @@ function exigirSessao(destino: string): void {
     throw redirect({ to: '/entrar', search: { redirect: destino } })
   }
 }
+
+/** Cupom escolhido vive na URL: sobrevive ao F5 e viaja para /pagamento. */
+const esquemaBuscaCupom = z.object({
+  cupom: z.string().trim().min(1).optional().catch(undefined),
+})
 
 const rotaRaiz = createRootRoute({
   component: LayoutRaiz,
@@ -55,12 +58,14 @@ const rotaDetalheNft = createRoute({
 const rotaCarrinho = createRoute({
   getParentRoute: () => rotaRaiz,
   path: '/carrinho',
+  validateSearch: zodValidator(esquemaBuscaCupom),
   component: PaginaCarrinho,
 })
 
 const rotaPagamento = createRoute({
   getParentRoute: () => rotaRaiz,
   path: '/pagamento',
+  validateSearch: zodValidator(esquemaBuscaCupom),
   beforeLoad: ({ location }) => exigirSessao(location.href),
   component: PaginaPagamento,
 })

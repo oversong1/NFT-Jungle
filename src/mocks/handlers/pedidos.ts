@@ -13,19 +13,76 @@ import { iniciarRequisicao, type Cenario } from '@/mocks/cenarios'
 import { servidorEventos } from '@/mocks/eventos'
 import type { Pedido } from '@/tipos/dominio'
 
-/** Transição assíncrona: simula o processamento do pagamento. */
-function agendarDesfecho(pedidoId: string, cenario: Cenario) {
+/** Conteúdo que a chave de idempotência protege: itens + cupom + carteira. */
+function hashDaCompra(
+  itens: Array<{ nftId: string; quantidade: number }>,
+  cupom: string | null,
+  carteiraId: string | null,
+): string {
+  const ordenados = [...itens]
+    .map((item) => ({ nftId: item.nftId, quantidade: item.quantidade }))
+    .sort((a, b) => a.nftId.localeCompare(b.nftId))
+  return JSON.stringify({ itens: ordenados, cupom, carteiraId })
+}
+
+/**
+ * Desfecho assíncrono do pagamento. Regras do enunciado:
+ * aprovado baixa o estoque e remove do carrinho SOMENTE o que foi comprado;
+ * recusado preserva carrinho e estoque intactos.
+ */
+function agendarDesfecho(pedidoId: string, identidade: string, cenario: Cenario) {
   const prazo = cenario === 'pedido-atrasado' ? 8000 : 2500
-  const statusFinal = cenario === 'pedido-recusado' ? 'recusado' : 'aprovado'
 
   setTimeout(() => {
     const banco = obterBanco()
     const pedido = banco.pedidos.find((registro) => registro.id === pedidoId)
+    // Pedidos aprovados ou recusados são terminais: nunca mudam de novo.
     if (!pedido || pedido.status !== 'processando') return
 
-    pedido.status = statusFinal
+    const agora = new Date().toISOString()
+
+    if (cenario === 'pedido-recusado') {
+      pedido.status = 'recusado'
+    } else {
+      const carrinho = obterCarrinho(identidade)
+      // Revalidação final: se algo esgotou durante o processamento, recusa.
+      const estoqueInsuficiente = pedido.recibo.itens.some((item) => {
+        const nft = banco.nfts.find((registro) => registro.id === item.nftId)
+        return !nft || nft.edicao.disponiveis < item.quantidade
+      })
+
+      if (estoqueInsuficiente) {
+        pedido.status = 'recusado'
+      } else {
+        pedido.status = 'aprovado'
+        for (const item of pedido.recibo.itens) {
+          const nft = banco.nfts.find((registro) => registro.id === item.nftId)!
+          // Baixa de estoque na APROVAÇÃO, guiada pelo recibo (snapshot).
+          nft.edicao.disponiveis -= item.quantidade
+          nft.versao += 1
+          nft.atualizadoEm = agora
+          servidorEventos.emitir('nft:atualizado', nft)
+
+          // Remove do carrinho apenas a quantidade comprada.
+          const noCarrinho = carrinho.itens.find(
+            (registro) => registro.nftId === item.nftId,
+          )
+          if (noCarrinho) {
+            noCarrinho.quantidade -= item.quantidade
+            if (noCarrinho.quantidade <= 0) {
+              carrinho.itens = carrinho.itens.filter(
+                (registro) => registro.nftId !== item.nftId,
+              )
+            }
+          }
+        }
+        carrinho.versao += 1
+        carrinho.atualizadoEm = agora
+      }
+    }
+
     pedido.versao += 1
-    pedido.atualizadoEm = new Date().toISOString()
+    pedido.atualizadoEm = agora
     salvarBanco()
     servidorEventos.emitir('pedido:atualizado', pedido)
   }, prazo)
@@ -39,12 +96,49 @@ export const handlersPedidos = [
     const usuario = autenticar(request)
     if (!usuario) return erroApi(401, 'SESSAO_INVALIDA', 'Faça login para comprar.')
 
+    // Idempotência: sem chave não há proteção contra duplicidade — recusa.
+    const chave = request.headers.get('idempotency-key')
+    if (!chave) {
+      return erroApi(422, 'CHAVE_AUSENTE', 'Chave de idempotência obrigatória.')
+    }
+
+    const corpo = (await request.json().catch(() => ({}))) as {
+      cupom?: string
+      carteiraId?: string
+    }
+
     const banco = obterBanco()
     const identidade = identidadeDaRequisicao(request)
     const carrinho = obterCarrinho(identidade)
+    const hash = hashDaCompra(
+      carrinho.itens,
+      corpo.cupom ?? null,
+      corpo.carteiraId ?? null,
+    )
+
+    const registro = banco.idempotencia[chave]
+    if (registro) {
+      if (registro.hash !== hash) {
+        return erroApi(
+          409,
+          'CHAVE_REUTILIZADA',
+          'Esta chave de idempotência já foi usada com um conteúdo diferente.',
+        )
+      }
+      // Mesma chave + mesmo conteúdo: devolve o MESMO pedido, sem criar outro.
+      const existente = banco.pedidos.find(
+        (candidato) => candidato.id === registro.pedidoId,
+      )
+      if (existente) return HttpResponse.json(existente)
+    }
 
     if (carrinho.itens.length === 0) {
       return erroApi(422, 'CARRINHO_VAZIO', 'Adicione itens antes de finalizar.')
+    }
+    if (!corpo.carteiraId) {
+      return erroApi(422, 'CARTEIRA_AUSENTE', 'Escolha uma carteira para pagar.', {
+        carteiraId: 'Escolha uma carteira.',
+      })
     }
 
     // Cenários de conflito no fechamento da compra
@@ -71,19 +165,16 @@ export const handlersPedidos = [
       }
     }
 
-    const corpo = (await request.json().catch(() => ({}))) as { cupom?: string }
     const cotacao = calcularCotacao(carrinho, corpo.cupom ?? null)
     if (ehErroApi(cotacao)) {
       return erroApi(cotacao.status, cotacao.codigo, cotacao.mensagem, cotacao.campos)
     }
 
-    // Baixa de estoque + snapshot do recibo no mesmo instante.
+    // Snapshot do recibo com os preços DESTE instante. Estoque e carrinho
+    // não são tocados aqui: isso é papel exclusivo da aprovação.
     const agora = new Date().toISOString()
     const itensRecibo = carrinho.itens.map((item) => {
       const nft = banco.nfts.find((registro) => registro.id === item.nftId)!
-      nft.edicao.disponiveis -= item.quantidade
-      nft.versao += 1
-      nft.atualizadoEm = agora
       return {
         nftId: nft.id,
         nome: nft.nome,
@@ -97,17 +188,23 @@ export const handlersPedidos = [
       versao: 1,
       atualizadoEm: agora,
       usuarioId: usuario.id,
+      carteiraId: corpo.carteiraId,
       status: 'processando',
       criadoEm: agora,
       recibo: { ...cotacao, itens: itensRecibo },
     }
     banco.pedidos.push(pedido)
-    carrinho.itens = []
-    carrinho.versao += 1
-    carrinho.atualizadoEm = agora
+    banco.idempotencia[chave] = { pedidoId: pedido.id, hash }
     salvarBanco()
 
-    agendarDesfecho(pedido.id, cenario)
+    agendarDesfecho(pedido.id, identidade, cenario)
+
+    // Cenário determinístico do enunciado: o pedido NASCEU, mas a resposta
+    // se perde (como um timeout). O cliente recupera reenviando a mesma chave.
+    if (cenario === 'timeout-pos-criacao') {
+      return HttpResponse.error()
+    }
+
     return HttpResponse.json(pedido, { status: 201 })
   }),
 

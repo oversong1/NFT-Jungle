@@ -18,6 +18,8 @@ export const chaves = {
     ['privado', 'pedidos', usuarioId, pedidoId] as const,
   perfil: (usuarioId: string) => ['privado', 'perfil', usuarioId] as const,
   carteiras: (usuarioId: string) => ['privado', 'carteiras', usuarioId] as const,
+  /** Prefixo de todas as cotações de uma identidade, com qualquer cupom. Usado em invalidação. */
+  cotacoes: (identidade: string) => ['cotacao', identidade] as const,
 }
 
 export function chaveEhPrivada(chave: readonly unknown[]): boolean {

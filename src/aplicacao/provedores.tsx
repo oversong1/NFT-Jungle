@@ -2,7 +2,14 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { useEffect, type ReactNode } from 'react'
 
 import { clienteConsultas, limparCachePrivado } from '@/aplicacao/cliente-consultas'
+import { ProvedorAnunciador } from '@/componentes/compostos/anunciador'
 import { roteador } from '@/aplicacao/rotas'
+import { useTempoReal } from '@/funcionalidades/tempo-real/usar-tempo-real'
+
+function SincronizadorTempoReal() {
+  useTempoReal()
+  return null
+}
 
 export function Provedores({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -22,5 +29,12 @@ export function Provedores({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  return <QueryClientProvider client={clienteConsultas}>{children}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={clienteConsultas}>
+      <ProvedorAnunciador>
+        <SincronizadorTempoReal />
+        {children}
+      </ProvedorAnunciador>
+    </QueryClientProvider>
+  )
 }
