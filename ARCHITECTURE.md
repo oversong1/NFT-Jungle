@@ -200,7 +200,7 @@ sobre variedade de imagem.
   como pixels da imagem; a outra continha um recorte de tela já com a
   barra preta). Isso só foi descoberto abrindo os arquivos `.jpg`
   diretamente (a verificação anterior nesta sessão só tinha conferido as
-  *dimensões* dos arquivos com PIL, nunca o conteúdo visual — esse foi o
+  _dimensões_ dos arquivos com PIL, nunca o conteúdo visual — esse foi o
   erro de verificação). Como `fixtures.ts` reaproveita essas duas imagens
   em mais de um NFT (`Emerald Ape`/`Cosmic Bloom` e `Sage Nomad`/
   `Violet Nomad`), o defeito aparecia em várias posições do grid, sempre
