@@ -68,7 +68,7 @@ export function LayoutRaiz() {
           </Link>
           <div className="hidden h-full items-center gap-8 lg:flex">
             {itensNavegacao.map((item, indice) =>
-              indice < 2 ? (
+              indice < 1 ? (
                 <Link
                   key={item}
                   to="/"
@@ -123,7 +123,7 @@ export function LayoutRaiz() {
             className={`${menuAberto ? 'flex' : 'hidden'} absolute left-0 right-0 top-full z-50 flex-col border border-[#4a2b18] bg-[#211510] p-4 shadow-2xl lg:hidden`}
           >
             {itensNavegacao.map((item, indice) =>
-              indice < 2 ? (
+              indice < 1 ? (
                 <Link
                   key={item}
                   to="/"

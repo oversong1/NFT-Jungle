@@ -43,6 +43,7 @@ export function PaginaDetalheNft() {
   const [quantidade, definirQuantidade] = useState(1)
   const [mensagem, definirMensagem] = useState('')
   const [abaAtiva, definirAbaAtiva] = useState<Aba>('descricao')
+  const [miniaturaAtiva, definirMiniaturaAtiva] = useState(0)
 
   const incluirNoCarrinho = useDefinirItemCarrinho()
 
@@ -163,19 +164,24 @@ export function PaginaDetalheNft() {
           className="order-2 flex gap-3 lg:order-1 lg:flex-col"
         >
           {Array.from({ length: 3 }, (_, indice) => (
-            <div
+            <button
               key={indice}
-              aria-hidden={indice > 0}
-              className={`aspect-square w-16 overflow-hidden bg-[#271712] p-1 lg:w-full ${
-                indice === 0 ? 'outline outline-1 outline-acao' : 'opacity-60'
+              type="button"
+              aria-label={`Ver miniatura ${indice + 1} de ${nft.nome}`}
+              aria-pressed={indice === miniaturaAtiva}
+              onClick={() => definirMiniaturaAtiva(indice)}
+              className={`aspect-square w-16 overflow-hidden bg-[#271712] p-1 transition-opacity lg:w-full ${
+                indice === miniaturaAtiva
+                  ? 'outline outline-1 outline-acao'
+                  : 'opacity-60 hover:opacity-100'
               }`}
             >
               <img
                 src={nft.imagem}
-                alt={indice === 0 ? `Miniatura do NFT ${nft.nome}` : ''}
+                alt={`Miniatura ${indice + 1} do NFT ${nft.nome}`}
                 className="h-full w-full object-cover"
               />
-            </div>
+            </button>
           ))}
         </section>
 
