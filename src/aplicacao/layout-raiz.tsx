@@ -1,10 +1,20 @@
-import { Link, Outlet } from '@tanstack/react-router'
-import { Menu, Search, ShoppingCart, X } from 'lucide-react'
+import { Link, Outlet, useLocation } from '@tanstack/react-router'
+import {
+  Compass,
+  Heart,
+  Home,
+  Menu,
+  Search,
+  ShoppingCart,
+  UserRound,
+  X,
+} from 'lucide-react'
 import { useState } from 'react'
 
 import { Rodape } from '@/componentes/compostos/rodape'
 import { useCarrinho } from '@/funcionalidades/carrinho/usar-carrinho'
 import { MenuSessao } from '@/funcionalidades/sessao/menu-sessao'
+import { useSessao } from '@/funcionalidades/sessao/usar-sessao'
 import { PainelDemonstracaoTempoReal } from '@/funcionalidades/tempo-real/painel-demonstracao'
 
 const buscaInicial = {
@@ -41,9 +51,82 @@ function BotaoCarrinho({ aoNavegar }: { aoNavegar: () => void }) {
   )
 }
 
+/** Rotas que já são a própria "tela cheia" — a barra não aparece nelas. */
+const rotasSemBarraInferior = new Set(['/entrar', '/cadastro'])
+
+/**
+ * Barra inferior mobile: início, favoritos, carrinho e perfil, com um botão
+ * central flutuante — conforme especificação visual (seção "Estrutura
+ * compartilhada"). "Favoritos" ainda não tem uma lista dedicada no escopo
+ * desta entrega (favoritar hoje é só um botão por NFT), então fica inerte.
+ */
+function BarraInferiorMobile() {
+  const local = useLocation()
+  const sessao = useSessao()
+  const carrinho = useCarrinho()
+  const quantidade = (carrinho.data?.itens ?? []).reduce(
+    (total, item) => total + item.quantidade,
+    0,
+  )
+
+  if (rotasSemBarraInferior.has(local.pathname)) return null
+
+  const classeItem =
+    'flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] font-bold text-texto-suave transition-colors [&.active]:text-acao'
+
+  return (
+    <nav
+      aria-label="Navegação inferior"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-[#4a2b18] bg-[#1a100b]/95 backdrop-blur lg:hidden"
+    >
+      <div className="relative mx-auto flex h-16 max-w-md items-center justify-between px-6">
+        <Link to="/" search={buscaInicial} className={classeItem}>
+          <Home aria-hidden="true" size={20} strokeWidth={1.8} />
+          Início
+        </Link>
+        <span
+          aria-disabled="true"
+          title="Sem lista de favoritos dedicada nesta entrega — favoritar já funciona no card e no detalhe do NFT."
+          className="flex cursor-default flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] font-bold text-texto-suave/50"
+        >
+          <Heart aria-hidden="true" size={20} strokeWidth={1.8} />
+          Favoritos
+        </span>
+
+        <Link
+          to="/"
+          search={buscaInicial}
+          aria-label="Explorar catálogo"
+          className="absolute left-1/2 top-0 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-4 border-[#1a100b] bg-acao text-[#160d09] shadow-[0_6px_16px_rgb(0_0_0_/_45%)] transition-transform hover:scale-105"
+        >
+          <Compass aria-hidden="true" size={24} strokeWidth={2} />
+        </Link>
+
+        <Link to="/carrinho" search={{ cupom: undefined }} className={classeItem}>
+          <span className="relative">
+            <ShoppingCart aria-hidden="true" size={20} strokeWidth={1.8} />
+            {quantidade > 0 ? (
+              <span className="absolute -right-1.5 -top-1.5 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-acao px-1 text-[8px] font-black text-[#140d0a]">
+                {quantidade > 9 ? '9+' : quantidade}
+              </span>
+            ) : null}
+          </span>
+          Carrinho
+        </Link>
+        <Link to={sessao.data ? '/perfil' : '/entrar'} className={classeItem}>
+          <UserRound aria-hidden="true" size={20} strokeWidth={1.8} />
+          Perfil
+        </Link>
+      </div>
+    </nav>
+  )
+}
+
 export function LayoutRaiz() {
   const [menuAberto, definirMenuAberto] = useState(false)
   const fecharMenu = () => definirMenuAberto(false)
+  const local = useLocation()
+  const semBarraInferior = rotasSemBarraInferior.has(local.pathname)
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-fundo">
@@ -150,8 +233,11 @@ export function LayoutRaiz() {
           </div>
         </nav>
       </header>
-      <Outlet />
-      <Rodape />
+      <div className={semBarraInferior ? '' : 'pb-16 lg:pb-0'}>
+        <Outlet />
+        <Rodape />
+      </div>
+      <BarraInferiorMobile />
       <PainelDemonstracaoTempoReal />
     </div>
   )

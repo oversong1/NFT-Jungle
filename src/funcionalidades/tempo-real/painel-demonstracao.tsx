@@ -30,7 +30,7 @@ export function PainelDemonstracaoTempoReal() {
 
   if (!aberto) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-20 right-4 z-50 lg:bottom-4">
         <Botao
           type="button"
           variante="secundaria"
@@ -46,7 +46,7 @@ export function PainelDemonstracaoTempoReal() {
   return (
     <section
       aria-label="Painel de demonstração de tempo real"
-      className="fixed bottom-4 right-4 z-50 max-w-xs space-y-2 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie-elevada p-4 shadow-[var(--sombra-cartao)]"
+      className="fixed bottom-20 right-4 z-50 max-w-xs space-y-2 rounded-[var(--raio-cartao)] border border-[var(--cor-borda)] bg-superficie-elevada p-4 shadow-[var(--sombra-cartao)] lg:bottom-4"
     >
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-bold text-titulo">Demonstração — tempo real</h2>
